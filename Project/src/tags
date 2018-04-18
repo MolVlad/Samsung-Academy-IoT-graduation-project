@@ -1,0 +1,264 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+ADC_CLOCK_RATIO_VS_CPU_HIGHEST	stm32f0xx_ll_adc.c	85;"	d	file:
+ADC_TIMEOUT_DISABLE_CPU_CYCLES	stm32f0xx_ll_adc.c	86;"	d	file:
+ADC_TIMEOUT_STOP_CONVERSION_CPU_CYCLES	stm32f0xx_ll_adc.c	87;"	d	file:
+AHBPrescTable	system_stm32f0xx.c	/^const uint8_t AHBPrescTable[16] = {0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 6, 7, 8, 9};$/;"	v
+APBPrescTable	system_stm32f0xx.c	/^const uint8_t APBPrescTable[8]  = {0, 0, 0, 0, 1, 2, 3, 4};$/;"	v
+CopyDataInit	startup_stm32f051x8.s	/^CopyDataInit:$/;"	l
+Default_Handler	startup_stm32f051x8.s	/^Default_Handler:$/;"	l
+FillZerobss	startup_stm32f051x8.s	/^FillZerobss:$/;"	l
+HSE_VALUE	system_stm32f0xx.c	42;"	d	file:
+HSI48_VALUE	system_stm32f0xx.c	52;"	d	file:
+HSI_VALUE	system_stm32f0xx.c	47;"	d	file:
+I2S_I2SCFGR_CLEAR_MASK	stm32f0xx_ll_spi.c	306;"	d	file:
+I2S_I2SPR_CLEAR_MASK	stm32f0xx_ll_spi.c	310;"	d	file:
+IC1Config	stm32f0xx_ll_tim.c	/^static ErrorStatus IC1Config(TIM_TypeDef *TIMx, LL_TIM_IC_InitTypeDef *TIM_ICInitStruct)$/;"	f	file:
+IC2Config	stm32f0xx_ll_tim.c	/^static ErrorStatus IC2Config(TIM_TypeDef *TIMx, LL_TIM_IC_InitTypeDef *TIM_ICInitStruct)$/;"	f	file:
+IC3Config	stm32f0xx_ll_tim.c	/^static ErrorStatus IC3Config(TIM_TypeDef *TIMx, LL_TIM_IC_InitTypeDef *TIM_ICInitStruct)$/;"	f	file:
+IC4Config	stm32f0xx_ll_tim.c	/^static ErrorStatus IC4Config(TIM_TypeDef *TIMx, LL_TIM_IC_InitTypeDef *TIM_ICInitStruct)$/;"	f	file:
+IS_LL_ADC_CLOCK	stm32f0xx_ll_adc.c	103;"	d	file:
+IS_LL_ADC_DATA_ALIGN	stm32f0xx_ll_adc.c	116;"	d	file:
+IS_LL_ADC_LOW_POWER	stm32f0xx_ll_adc.c	121;"	d	file:
+IS_LL_ADC_REG_CONTINUOUS_MODE	stm32f0xx_ll_adc.c	139;"	d	file:
+IS_LL_ADC_REG_DMA_TRANSFER	stm32f0xx_ll_adc.c	144;"	d	file:
+IS_LL_ADC_REG_OVR_DATA_BEHAVIOR	stm32f0xx_ll_adc.c	150;"	d	file:
+IS_LL_ADC_REG_SEQ_SCAN_DISCONT_MODE	stm32f0xx_ll_adc.c	155;"	d	file:
+IS_LL_ADC_REG_TRIG_SOURCE	stm32f0xx_ll_adc.c	130;"	d	file:
+IS_LL_ADC_RESOLUTION	stm32f0xx_ll_adc.c	109;"	d	file:
+IS_LL_COMP_INPUT_HYSTERESIS	stm32f0xx_ll_comp.c	105;"	d	file:
+IS_LL_COMP_INPUT_MINUS	stm32f0xx_ll_comp.c	95;"	d	file:
+IS_LL_COMP_INPUT_PLUS	stm32f0xx_ll_comp.c	79;"	d	file:
+IS_LL_COMP_OUTPUT_POLARITY	stm32f0xx_ll_comp.c	123;"	d	file:
+IS_LL_COMP_OUTPUT_SELECTION	stm32f0xx_ll_comp.c	112;"	d	file:
+IS_LL_COMP_POWER_MODE	stm32f0xx_ll_comp.c	70;"	d	file:
+IS_LL_DAC_CHANNEL	stm32f0xx_ll_dac.c	69;"	d	file:
+IS_LL_DAC_CHANNEL	stm32f0xx_ll_dac.c	75;"	d	file:
+IS_LL_DAC_OUTPUT_BUFFER	stm32f0xx_ll_dac.c	127;"	d	file:
+IS_LL_DAC_TRIGGER_SOURCE	stm32f0xx_ll_dac.c	81;"	d	file:
+IS_LL_DAC_WAVE_AUTO_GENER_CONFIG	stm32f0xx_ll_dac.c	99;"	d	file:
+IS_LL_DAC_WAVE_AUTO_GENER_MODE	stm32f0xx_ll_dac.c	93;"	d	file:
+IS_LL_DMA_ALL_CHANNEL_INSTANCE	stm32f0xx_ll_dma.c	114;"	d	file:
+IS_LL_DMA_ALL_CHANNEL_INSTANCE	stm32f0xx_ll_dma.c	131;"	d	file:
+IS_LL_DMA_ALL_CHANNEL_INSTANCE	stm32f0xx_ll_dma.c	148;"	d	file:
+IS_LL_DMA_ALL_CHANNEL_INSTANCE	stm32f0xx_ll_dma.c	157;"	d	file:
+IS_LL_DMA_ALL_CHANNEL_INSTANCE	stm32f0xx_ll_dma.c	165;"	d	file:
+IS_LL_DMA_DIRECTION	stm32f0xx_ll_dma.c	65;"	d	file:
+IS_LL_DMA_MEMORYDATASIZE	stm32f0xx_ll_dma.c	82;"	d	file:
+IS_LL_DMA_MEMORYINCMODE	stm32f0xx_ll_dma.c	75;"	d	file:
+IS_LL_DMA_MODE	stm32f0xx_ll_dma.c	69;"	d	file:
+IS_LL_DMA_NBDATA	stm32f0xx_ll_dma.c	86;"	d	file:
+IS_LL_DMA_PERIPHDATASIZE	stm32f0xx_ll_dma.c	78;"	d	file:
+IS_LL_DMA_PERIPHINCMODE	stm32f0xx_ll_dma.c	72;"	d	file:
+IS_LL_DMA_PERIPHREQUEST	stm32f0xx_ll_dma.c	89;"	d	file:
+IS_LL_DMA_PRIORITY	stm32f0xx_ll_dma.c	107;"	d	file:
+IS_LL_EXTI_LINE_0_31	stm32f0xx_ll_exti.c	65;"	d	file:
+IS_LL_EXTI_MODE	stm32f0xx_ll_exti.c	67;"	d	file:
+IS_LL_EXTI_TRIGGER	stm32f0xx_ll_exti.c	72;"	d	file:
+IS_LL_GPIO_ALTERNATE	stm32f0xx_ll_gpio.c	83;"	d	file:
+IS_LL_GPIO_MODE	stm32f0xx_ll_gpio.c	67;"	d	file:
+IS_LL_GPIO_OUTPUT_TYPE	stm32f0xx_ll_gpio.c	72;"	d	file:
+IS_LL_GPIO_PIN	stm32f0xx_ll_gpio.c	65;"	d	file:
+IS_LL_GPIO_PULL	stm32f0xx_ll_gpio.c	79;"	d	file:
+IS_LL_GPIO_SPEED	stm32f0xx_ll_gpio.c	75;"	d	file:
+IS_LL_I2C_ANALOG_FILTER	stm32f0xx_ll_i2c.c	71;"	d	file:
+IS_LL_I2C_DIGITAL_FILTER	stm32f0xx_ll_i2c.c	74;"	d	file:
+IS_LL_I2C_OWN_ADDRESS1	stm32f0xx_ll_i2c.c	76;"	d	file:
+IS_LL_I2C_OWN_ADDRSIZE	stm32f0xx_ll_i2c.c	81;"	d	file:
+IS_LL_I2C_PERIPHERAL_MODE	stm32f0xx_ll_i2c.c	66;"	d	file:
+IS_LL_I2C_TYPE_ACKNOWLEDGE	stm32f0xx_ll_i2c.c	78;"	d	file:
+IS_LL_I2S_AUDIO_FREQ	stm32f0xx_ll_spi.c	341;"	d	file:
+IS_LL_I2S_CPOL	stm32f0xx_ll_spi.c	324;"	d	file:
+IS_LL_I2S_DATAFORMAT	stm32f0xx_ll_spi.c	319;"	d	file:
+IS_LL_I2S_MCLK_OUTPUT	stm32f0xx_ll_spi.c	338;"	d	file:
+IS_LL_I2S_MODE	stm32f0xx_ll_spi.c	333;"	d	file:
+IS_LL_I2S_PRESCALER_LINEAR	stm32f0xx_ll_spi.c	345;"	d	file:
+IS_LL_I2S_PRESCALER_PARITY	stm32f0xx_ll_spi.c	347;"	d	file:
+IS_LL_I2S_STANDARD	stm32f0xx_ll_spi.c	327;"	d	file:
+IS_LL_RCC_CEC_CLKSOURCE	stm32f0xx_ll_rcc.c	85;"	d	file:
+IS_LL_RCC_I2C_CLKSOURCE	stm32f0xx_ll_rcc.c	78;"	d	file:
+IS_LL_RCC_USART_CLKSOURCE	stm32f0xx_ll_rcc.c	65;"	d	file:
+IS_LL_RCC_USART_CLKSOURCE	stm32f0xx_ll_rcc.c	69;"	d	file:
+IS_LL_RCC_USART_CLKSOURCE	stm32f0xx_ll_rcc.c	72;"	d	file:
+IS_LL_RCC_USART_CLKSOURCE	stm32f0xx_ll_rcc.c	75;"	d	file:
+IS_LL_RCC_USB_CLKSOURCE	stm32f0xx_ll_rcc.c	81;"	d	file:
+IS_LL_RTC_ALMA_DATE_WEEKDAY_SEL	stm32f0xx_ll_rtc.c	131;"	d	file:
+IS_LL_RTC_ALMA_MASK	stm32f0xx_ll_rtc.c	123;"	d	file:
+IS_LL_RTC_ASYNCH_PREDIV	stm32f0xx_ll_rtc.c	83;"	d	file:
+IS_LL_RTC_DAY	stm32f0xx_ll_rtc.c	106;"	d	file:
+IS_LL_RTC_FORMAT	stm32f0xx_ll_rtc.c	87;"	d	file:
+IS_LL_RTC_HOUR12	stm32f0xx_ll_rtc.c	93;"	d	file:
+IS_LL_RTC_HOUR24	stm32f0xx_ll_rtc.c	94;"	d	file:
+IS_LL_RTC_HOURFORMAT	stm32f0xx_ll_rtc.c	80;"	d	file:
+IS_LL_RTC_MINUTES	stm32f0xx_ll_rtc.c	95;"	d	file:
+IS_LL_RTC_MONTH	stm32f0xx_ll_rtc.c	108;"	d	file:
+IS_LL_RTC_SECONDS	stm32f0xx_ll_rtc.c	96;"	d	file:
+IS_LL_RTC_SYNCH_PREDIV	stm32f0xx_ll_rtc.c	85;"	d	file:
+IS_LL_RTC_TIME_FORMAT	stm32f0xx_ll_rtc.c	90;"	d	file:
+IS_LL_RTC_WEEKDAY	stm32f0xx_ll_rtc.c	98;"	d	file:
+IS_LL_RTC_YEAR	stm32f0xx_ll_rtc.c	121;"	d	file:
+IS_LL_SPI_BAUDRATE	stm32f0xx_ll_spi.c	113;"	d	file:
+IS_LL_SPI_BITORDER	stm32f0xx_ll_spi.c	122;"	d	file:
+IS_LL_SPI_CRCCALCULATION	stm32f0xx_ll_spi.c	125;"	d	file:
+IS_LL_SPI_CRC_POLYNOMIAL	stm32f0xx_ll_spi.c	128;"	d	file:
+IS_LL_SPI_DATAWIDTH	stm32f0xx_ll_spi.c	89;"	d	file:
+IS_LL_SPI_MODE	stm32f0xx_ll_spi.c	86;"	d	file:
+IS_LL_SPI_NSS	stm32f0xx_ll_spi.c	109;"	d	file:
+IS_LL_SPI_PHASE	stm32f0xx_ll_spi.c	106;"	d	file:
+IS_LL_SPI_POLARITY	stm32f0xx_ll_spi.c	103;"	d	file:
+IS_LL_SPI_TRANSFER_DIRECTION	stm32f0xx_ll_spi.c	81;"	d	file:
+IS_LL_TIM_ACTIVEINPUT	stm32f0xx_ll_tim.c	94;"	d	file:
+IS_LL_TIM_CLOCKDIVISION	stm32f0xx_ll_tim.c	72;"	d	file:
+IS_LL_TIM_COUNTERMODE	stm32f0xx_ll_tim.c	66;"	d	file:
+IS_LL_TIM_ENCODERMODE	stm32f0xx_ll_tim.c	124;"	d	file:
+IS_LL_TIM_ICPSC	stm32f0xx_ll_tim.c	98;"	d	file:
+IS_LL_TIM_IC_FILTER	stm32f0xx_ll_tim.c	103;"	d	file:
+IS_LL_TIM_IC_POLARITY	stm32f0xx_ll_tim.c	120;"	d	file:
+IS_LL_TIM_IC_POLARITY_ENCODER	stm32f0xx_ll_tim.c	128;"	d	file:
+IS_LL_TIM_OCIDLESTATE	stm32f0xx_ll_tim.c	91;"	d	file:
+IS_LL_TIM_OCMODE	stm32f0xx_ll_tim.c	76;"	d	file:
+IS_LL_TIM_OCPOLARITY	stm32f0xx_ll_tim.c	88;"	d	file:
+IS_LL_TIM_OCSTATE	stm32f0xx_ll_tim.c	85;"	d	file:
+IS_LL_USART_BAUDRATE	stm32f0xx_ll_usart.c	78;"	d	file:
+IS_LL_USART_CLOCKOUTPUT	stm32f0xx_ll_usart.c	110;"	d	file:
+IS_LL_USART_CLOCKPHASE	stm32f0xx_ll_usart.c	104;"	d	file:
+IS_LL_USART_CLOCKPOLARITY	stm32f0xx_ll_usart.c	107;"	d	file:
+IS_LL_USART_DATAWIDTH	stm32f0xx_ll_usart.c	90;"	d	file:
+IS_LL_USART_DATAWIDTH	stm32f0xx_ll_usart.c	94;"	d	file:
+IS_LL_USART_DIRECTION	stm32f0xx_ll_usart.c	80;"	d	file:
+IS_LL_USART_HWCONTROL	stm32f0xx_ll_usart.c	123;"	d	file:
+IS_LL_USART_LASTBITCLKOUTPUT	stm32f0xx_ll_usart.c	101;"	d	file:
+IS_LL_USART_OVERSAMPLING	stm32f0xx_ll_usart.c	98;"	d	file:
+IS_LL_USART_PARITY	stm32f0xx_ll_usart.c	85;"	d	file:
+IS_LL_USART_STOPBITS	stm32f0xx_ll_usart.c	114;"	d	file:
+IS_LL_USART_STOPBITS	stm32f0xx_ll_usart.c	119;"	d	file:
+IS_LL_UTILS_APB1_DIV	stm32f0xx_ll_utils.c	89;"	d	file:
+IS_LL_UTILS_HSE_BYPASS	stm32f0xx_ll_utils.c	123;"	d	file:
+IS_LL_UTILS_HSE_FREQUENCY	stm32f0xx_ll_utils.c	126;"	d	file:
+IS_LL_UTILS_PLLMUL_VALUE	stm32f0xx_ll_utils.c	95;"	d	file:
+IS_LL_UTILS_PLL_FREQUENCY	stm32f0xx_ll_utils.c	120;"	d	file:
+IS_LL_UTILS_PREDIV_VALUE	stm32f0xx_ll_utils.c	111;"	d	file:
+IS_LL_UTILS_SYSCLK_DIV	stm32f0xx_ll_utils.c	79;"	d	file:
+Infinite_Loop	startup_stm32f051x8.s	/^Infinite_Loop:$/;"	l
+LL_ADC_CommonDeInit	stm32f0xx_ll_adc.c	/^ErrorStatus LL_ADC_CommonDeInit(ADC_Common_TypeDef *ADCxy_COMMON)$/;"	f
+LL_ADC_DeInit	stm32f0xx_ll_adc.c	/^ErrorStatus LL_ADC_DeInit(ADC_TypeDef *ADCx)$/;"	f
+LL_ADC_Init	stm32f0xx_ll_adc.c	/^ErrorStatus LL_ADC_Init(ADC_TypeDef *ADCx, LL_ADC_InitTypeDef *ADC_InitStruct)$/;"	f
+LL_ADC_REG_Init	stm32f0xx_ll_adc.c	/^ErrorStatus LL_ADC_REG_Init(ADC_TypeDef *ADCx, LL_ADC_REG_InitTypeDef *ADC_REG_InitStruct)$/;"	f
+LL_ADC_REG_StructInit	stm32f0xx_ll_adc.c	/^void LL_ADC_REG_StructInit(LL_ADC_REG_InitTypeDef *ADC_REG_InitStruct)$/;"	f
+LL_ADC_StructInit	stm32f0xx_ll_adc.c	/^void LL_ADC_StructInit(LL_ADC_InitTypeDef *ADC_InitStruct)$/;"	f
+LL_COMP_DeInit	stm32f0xx_ll_comp.c	/^ErrorStatus LL_COMP_DeInit(COMP_TypeDef *COMPx)$/;"	f
+LL_COMP_Init	stm32f0xx_ll_comp.c	/^ErrorStatus LL_COMP_Init(COMP_TypeDef *COMPx, LL_COMP_InitTypeDef *COMP_InitStruct)$/;"	f
+LL_COMP_StructInit	stm32f0xx_ll_comp.c	/^void LL_COMP_StructInit(LL_COMP_InitTypeDef *COMP_InitStruct)$/;"	f
+LL_CRC_DeInit	stm32f0xx_ll_crc.c	/^ErrorStatus LL_CRC_DeInit(CRC_TypeDef *CRCx)$/;"	f
+LL_CRS_DeInit	stm32f0xx_ll_crs.c	/^ErrorStatus LL_CRS_DeInit(void)$/;"	f
+LL_DAC_DeInit	stm32f0xx_ll_dac.c	/^ErrorStatus LL_DAC_DeInit(DAC_TypeDef *DACx)$/;"	f
+LL_DAC_Init	stm32f0xx_ll_dac.c	/^ErrorStatus LL_DAC_Init(DAC_TypeDef *DACx, uint32_t DAC_Channel, LL_DAC_InitTypeDef *DAC_InitStruct)$/;"	f
+LL_DAC_StructInit	stm32f0xx_ll_dac.c	/^void LL_DAC_StructInit(LL_DAC_InitTypeDef *DAC_InitStruct)$/;"	f
+LL_DMA_DeInit	stm32f0xx_ll_dma.c	/^uint32_t LL_DMA_DeInit(DMA_TypeDef *DMAx, uint32_t Channel)$/;"	f
+LL_DMA_Init	stm32f0xx_ll_dma.c	/^uint32_t LL_DMA_Init(DMA_TypeDef *DMAx, uint32_t Channel, LL_DMA_InitTypeDef *DMA_InitStruct)$/;"	f
+LL_DMA_StructInit	stm32f0xx_ll_dma.c	/^void LL_DMA_StructInit(LL_DMA_InitTypeDef *DMA_InitStruct)$/;"	f
+LL_EXTI_DeInit	stm32f0xx_ll_exti.c	/^uint32_t LL_EXTI_DeInit(void)$/;"	f
+LL_EXTI_Init	stm32f0xx_ll_exti.c	/^uint32_t LL_EXTI_Init(LL_EXTI_InitTypeDef *EXTI_InitStruct)$/;"	f
+LL_EXTI_StructInit	stm32f0xx_ll_exti.c	/^void LL_EXTI_StructInit(LL_EXTI_InitTypeDef *EXTI_InitStruct)$/;"	f
+LL_GPIO_DeInit	stm32f0xx_ll_gpio.c	/^ErrorStatus LL_GPIO_DeInit(GPIO_TypeDef *GPIOx)$/;"	f
+LL_GPIO_Init	stm32f0xx_ll_gpio.c	/^ErrorStatus LL_GPIO_Init(GPIO_TypeDef *GPIOx, LL_GPIO_InitTypeDef *GPIO_InitStruct)$/;"	f
+LL_GPIO_StructInit	stm32f0xx_ll_gpio.c	/^void LL_GPIO_StructInit(LL_GPIO_InitTypeDef *GPIO_InitStruct)$/;"	f
+LL_I2C_DeInit	stm32f0xx_ll_i2c.c	/^uint32_t LL_I2C_DeInit(I2C_TypeDef *I2Cx)$/;"	f
+LL_I2C_Init	stm32f0xx_ll_i2c.c	/^uint32_t LL_I2C_Init(I2C_TypeDef *I2Cx, LL_I2C_InitTypeDef *I2C_InitStruct)$/;"	f
+LL_I2C_StructInit	stm32f0xx_ll_i2c.c	/^void LL_I2C_StructInit(LL_I2C_InitTypeDef *I2C_InitStruct)$/;"	f
+LL_I2S_ConfigPrescaler	stm32f0xx_ll_spi.c	/^void LL_I2S_ConfigPrescaler(SPI_TypeDef *SPIx, uint32_t PrescalerLinear, uint32_t PrescalerParity)$/;"	f
+LL_I2S_DeInit	stm32f0xx_ll_spi.c	/^ErrorStatus LL_I2S_DeInit(SPI_TypeDef *SPIx)$/;"	f
+LL_I2S_Init	stm32f0xx_ll_spi.c	/^ErrorStatus LL_I2S_Init(SPI_TypeDef *SPIx, LL_I2S_InitTypeDef *I2S_InitStruct)$/;"	f
+LL_I2S_StructInit	stm32f0xx_ll_spi.c	/^void LL_I2S_StructInit(LL_I2S_InitTypeDef *I2S_InitStruct)$/;"	f
+LL_Init1msTick	stm32f0xx_ll_utils.c	/^void LL_Init1msTick(uint32_t HCLKFrequency)$/;"	f
+LL_PLL_ConfigSystemClock_HSE	stm32f0xx_ll_utils.c	/^ErrorStatus LL_PLL_ConfigSystemClock_HSE(uint32_t HSEFrequency, uint32_t HSEBypass,$/;"	f
+LL_PLL_ConfigSystemClock_HSI	stm32f0xx_ll_utils.c	/^ErrorStatus LL_PLL_ConfigSystemClock_HSI(LL_UTILS_PLLInitTypeDef *UTILS_PLLInitStruct,$/;"	f
+LL_PLL_ConfigSystemClock_HSI48	stm32f0xx_ll_utils.c	/^ErrorStatus LL_PLL_ConfigSystemClock_HSI48(LL_UTILS_PLLInitTypeDef *UTILS_PLLInitStruct,$/;"	f
+LL_PWR_DeInit	stm32f0xx_ll_pwr.c	/^ErrorStatus LL_PWR_DeInit(void)$/;"	f
+LL_RCC_DeInit	stm32f0xx_ll_rcc.c	/^ErrorStatus LL_RCC_DeInit(void)$/;"	f
+LL_RCC_GetCECClockFreq	stm32f0xx_ll_rcc.c	/^uint32_t LL_RCC_GetCECClockFreq(uint32_t CECxSource)$/;"	f
+LL_RCC_GetI2CClockFreq	stm32f0xx_ll_rcc.c	/^uint32_t LL_RCC_GetI2CClockFreq(uint32_t I2CxSource)$/;"	f
+LL_RCC_GetSystemClocksFreq	stm32f0xx_ll_rcc.c	/^void LL_RCC_GetSystemClocksFreq(LL_RCC_ClocksTypeDef *RCC_Clocks)$/;"	f
+LL_RCC_GetUSARTClockFreq	stm32f0xx_ll_rcc.c	/^uint32_t LL_RCC_GetUSARTClockFreq(uint32_t USARTxSource)$/;"	f
+LL_RCC_GetUSBClockFreq	stm32f0xx_ll_rcc.c	/^uint32_t LL_RCC_GetUSBClockFreq(uint32_t USBxSource)$/;"	f
+LL_RTC_ALMA_Init	stm32f0xx_ll_rtc.c	/^ErrorStatus LL_RTC_ALMA_Init(RTC_TypeDef *RTCx, uint32_t RTC_Format, LL_RTC_AlarmTypeDef *RTC_AlarmStruct)$/;"	f
+LL_RTC_ALMA_StructInit	stm32f0xx_ll_rtc.c	/^void LL_RTC_ALMA_StructInit(LL_RTC_AlarmTypeDef *RTC_AlarmStruct)$/;"	f
+LL_RTC_DATE_Init	stm32f0xx_ll_rtc.c	/^ErrorStatus LL_RTC_DATE_Init(RTC_TypeDef *RTCx, uint32_t RTC_Format, LL_RTC_DateTypeDef *RTC_DateStruct)$/;"	f
+LL_RTC_DATE_StructInit	stm32f0xx_ll_rtc.c	/^void LL_RTC_DATE_StructInit(LL_RTC_DateTypeDef *RTC_DateStruct)$/;"	f
+LL_RTC_DeInit	stm32f0xx_ll_rtc.c	/^ErrorStatus LL_RTC_DeInit(RTC_TypeDef *RTCx)$/;"	f
+LL_RTC_EnterInitMode	stm32f0xx_ll_rtc.c	/^ErrorStatus LL_RTC_EnterInitMode(RTC_TypeDef *RTCx)$/;"	f
+LL_RTC_ExitInitMode	stm32f0xx_ll_rtc.c	/^ErrorStatus LL_RTC_ExitInitMode(RTC_TypeDef *RTCx)$/;"	f
+LL_RTC_Init	stm32f0xx_ll_rtc.c	/^ErrorStatus LL_RTC_Init(RTC_TypeDef *RTCx, LL_RTC_InitTypeDef *RTC_InitStruct)$/;"	f
+LL_RTC_StructInit	stm32f0xx_ll_rtc.c	/^void LL_RTC_StructInit(LL_RTC_InitTypeDef *RTC_InitStruct)$/;"	f
+LL_RTC_TIME_Init	stm32f0xx_ll_rtc.c	/^ErrorStatus LL_RTC_TIME_Init(RTC_TypeDef *RTCx, uint32_t RTC_Format, LL_RTC_TimeTypeDef *RTC_TimeStruct)$/;"	f
+LL_RTC_TIME_StructInit	stm32f0xx_ll_rtc.c	/^void LL_RTC_TIME_StructInit(LL_RTC_TimeTypeDef *RTC_TimeStruct)$/;"	f
+LL_RTC_WaitForSynchro	stm32f0xx_ll_rtc.c	/^ErrorStatus LL_RTC_WaitForSynchro(RTC_TypeDef *RTCx)$/;"	f
+LL_SPI_DeInit	stm32f0xx_ll_spi.c	/^ErrorStatus LL_SPI_DeInit(SPI_TypeDef *SPIx)$/;"	f
+LL_SPI_Init	stm32f0xx_ll_spi.c	/^ErrorStatus LL_SPI_Init(SPI_TypeDef *SPIx, LL_SPI_InitTypeDef *SPI_InitStruct)$/;"	f
+LL_SPI_StructInit	stm32f0xx_ll_spi.c	/^void LL_SPI_StructInit(LL_SPI_InitTypeDef *SPI_InitStruct)$/;"	f
+LL_SetSystemCoreClock	stm32f0xx_ll_utils.c	/^void LL_SetSystemCoreClock(uint32_t HCLKFrequency)$/;"	f
+LL_TIM_DeInit	stm32f0xx_ll_tim.c	/^ErrorStatus LL_TIM_DeInit(TIM_TypeDef *TIMx)$/;"	f
+LL_TIM_ENCODER_Init	stm32f0xx_ll_tim.c	/^ErrorStatus LL_TIM_ENCODER_Init(TIM_TypeDef *TIMx, LL_TIM_ENCODER_InitTypeDef *TIM_EncoderInitStruct)$/;"	f
+LL_TIM_ENCODER_StructInit	stm32f0xx_ll_tim.c	/^void LL_TIM_ENCODER_StructInit(LL_TIM_ENCODER_InitTypeDef *TIM_EncoderInitStruct)$/;"	f
+LL_TIM_HALLSENSOR_Init	stm32f0xx_ll_tim.c	/^ErrorStatus LL_TIM_HALLSENSOR_Init(TIM_TypeDef *TIMx, LL_TIM_HALLSENSOR_InitTypeDef *TIM_HallSensorInitStruct)$/;"	f
+LL_TIM_HALLSENSOR_StructInit	stm32f0xx_ll_tim.c	/^void LL_TIM_HALLSENSOR_StructInit(LL_TIM_HALLSENSOR_InitTypeDef *TIM_HallSensorInitStruct)$/;"	f
+LL_TIM_IC_Init	stm32f0xx_ll_tim.c	/^ErrorStatus LL_TIM_IC_Init(TIM_TypeDef *TIMx, uint32_t Channel, LL_TIM_IC_InitTypeDef *TIM_IC_InitStruct)$/;"	f
+LL_TIM_IC_StructInit	stm32f0xx_ll_tim.c	/^void LL_TIM_IC_StructInit(LL_TIM_IC_InitTypeDef *TIM_ICInitStruct)$/;"	f
+LL_TIM_Init	stm32f0xx_ll_tim.c	/^ErrorStatus LL_TIM_Init(TIM_TypeDef *TIMx, LL_TIM_InitTypeDef *TIM_InitStruct)$/;"	f
+LL_TIM_OC_Init	stm32f0xx_ll_tim.c	/^ErrorStatus LL_TIM_OC_Init(TIM_TypeDef *TIMx, uint32_t Channel, LL_TIM_OC_InitTypeDef *TIM_OC_InitStruct)$/;"	f
+LL_TIM_OC_StructInit	stm32f0xx_ll_tim.c	/^void LL_TIM_OC_StructInit(LL_TIM_OC_InitTypeDef *TIM_OC_InitStruct)$/;"	f
+LL_TIM_StructInit	stm32f0xx_ll_tim.c	/^void LL_TIM_StructInit(LL_TIM_InitTypeDef *TIM_InitStruct)$/;"	f
+LL_USART_ClockInit	stm32f0xx_ll_usart.c	/^ErrorStatus LL_USART_ClockInit(USART_TypeDef *USARTx, LL_USART_ClockInitTypeDef *USART_ClockInitStruct)$/;"	f
+LL_USART_ClockStructInit	stm32f0xx_ll_usart.c	/^void LL_USART_ClockStructInit(LL_USART_ClockInitTypeDef *USART_ClockInitStruct)$/;"	f
+LL_USART_DeInit	stm32f0xx_ll_usart.c	/^ErrorStatus LL_USART_DeInit(USART_TypeDef *USARTx)$/;"	f
+LL_USART_Init	stm32f0xx_ll_usart.c	/^ErrorStatus LL_USART_Init(USART_TypeDef *USARTx, LL_USART_InitTypeDef *USART_InitStruct)$/;"	f
+LL_USART_StructInit	stm32f0xx_ll_usart.c	/^void LL_USART_StructInit(LL_USART_InitTypeDef *USART_InitStruct)$/;"	f
+LL_mDelay	stm32f0xx_ll_utils.c	/^void LL_mDelay(uint32_t Delay)$/;"	f
+LoopCopyDataInit	startup_stm32f051x8.s	/^LoopCopyDataInit:$/;"	l
+LoopFillZerobss	startup_stm32f051x8.s	/^LoopFillZerobss:$/;"	l
+LoopForever	startup_stm32f051x8.s	/^LoopForever:$/;"	l
+OC1Config	stm32f0xx_ll_tim.c	/^static ErrorStatus OC1Config(TIM_TypeDef *TIMx, LL_TIM_OC_InitTypeDef *TIM_OCInitStruct)$/;"	f	file:
+OC2Config	stm32f0xx_ll_tim.c	/^static ErrorStatus OC2Config(TIM_TypeDef *TIMx, LL_TIM_OC_InitTypeDef *TIM_OCInitStruct)$/;"	f	file:
+OC3Config	stm32f0xx_ll_tim.c	/^static ErrorStatus OC3Config(TIM_TypeDef *TIMx, LL_TIM_OC_InitTypeDef *TIM_OCInitStruct)$/;"	f	file:
+OC4Config	stm32f0xx_ll_tim.c	/^static ErrorStatus OC4Config(TIM_TypeDef *TIMx, LL_TIM_OC_InitTypeDef *TIM_OCInitStruct)$/;"	f	file:
+RCC_GetHCLKClockFreq	stm32f0xx_ll_rcc.c	/^uint32_t RCC_GetHCLKClockFreq(uint32_t SYSCLK_Frequency)$/;"	f
+RCC_GetPCLK1ClockFreq	stm32f0xx_ll_rcc.c	/^uint32_t RCC_GetPCLK1ClockFreq(uint32_t HCLK_Frequency)$/;"	f
+RCC_GetSystemClockFreq	stm32f0xx_ll_rcc.c	/^uint32_t RCC_GetSystemClockFreq(void)$/;"	f
+RCC_PLL_GetFreqDomain_SYS	stm32f0xx_ll_rcc.c	/^uint32_t RCC_PLL_GetFreqDomain_SYS(void)$/;"	f
+RTC_ASYNCH_PRESC_DEFAULT	stm32f0xx_ll_rtc.c	65;"	d	file:
+RTC_INITMODE_TIMEOUT	stm32f0xx_ll_rtc.c	69;"	d	file:
+RTC_SYNCHRO_TIMEOUT	stm32f0xx_ll_rtc.c	70;"	d	file:
+RTC_SYNCH_PRESC_DEFAULT	stm32f0xx_ll_rtc.c	66;"	d	file:
+Reset_Handler	startup_stm32f051x8.s	/^Reset_Handler:$/;"	l
+SPI_CR1_CLEAR_MASK	stm32f0xx_ll_spi.c	68;"	d	file:
+SystemCoreClock	system_stm32f0xx.c	/^uint32_t SystemCoreClock = 8000000;$/;"	v
+SystemCoreClockUpdate	system_stm32f0xx.c	/^void SystemCoreClockUpdate (void)$/;"	f
+SystemInit	system_stm32f0xx.c	/^void SystemInit(void)$/;"	f
+UTILS_EnablePLLAndSwitchSystem	stm32f0xx_ll_utils.c	/^static ErrorStatus UTILS_EnablePLLAndSwitchSystem(uint32_t SYSCLK_Frequency, LL_UTILS_ClkInitTypeDef *UTILS_ClkInitStruct)$/;"	f	file:
+UTILS_GetPLLOutputFrequency	stm32f0xx_ll_utils.c	/^static uint32_t UTILS_GetPLLOutputFrequency(uint32_t PLL_InputFrequency, LL_UTILS_PLLInitTypeDef *UTILS_PLLInitStruct)$/;"	f	file:
+UTILS_HSE_FREQUENCY_MAX	stm32f0xx_ll_utils.c	68;"	d	file:
+UTILS_HSE_FREQUENCY_MIN	stm32f0xx_ll_utils.c	67;"	d	file:
+UTILS_LATENCY1_FREQ	stm32f0xx_ll_utils.c	71;"	d	file:
+UTILS_PLL_IsBusy	stm32f0xx_ll_utils.c	/^static ErrorStatus UTILS_PLL_IsBusy(void)$/;"	f	file:
+UTILS_PLL_OUTPUT_MAX	stm32f0xx_ll_utils.c	64;"	d	file:
+UTILS_PLL_OUTPUT_MIN	stm32f0xx_ll_utils.c	63;"	d	file:
+UTILS_SetFlashLatency	stm32f0xx_ll_utils.c	/^static ErrorStatus UTILS_SetFlashLatency(uint32_t Frequency)$/;"	f	file:
+assert_param	stm32f0xx_ll_adc.c	46;"	d	file:
+assert_param	stm32f0xx_ll_comp.c	45;"	d	file:
+assert_param	stm32f0xx_ll_crc.c	45;"	d	file:
+assert_param	stm32f0xx_ll_dac.c	46;"	d	file:
+assert_param	stm32f0xx_ll_dma.c	45;"	d	file:
+assert_param	stm32f0xx_ll_exti.c	44;"	d	file:
+assert_param	stm32f0xx_ll_gpio.c	45;"	d	file:
+assert_param	stm32f0xx_ll_i2c.c	45;"	d	file:
+assert_param	stm32f0xx_ll_rcc.c	44;"	d	file:
+assert_param	stm32f0xx_ll_rtc.c	45;"	d	file:
+assert_param	stm32f0xx_ll_spi.c	47;"	d	file:
+assert_param	stm32f0xx_ll_tim.c	46;"	d	file:
+assert_param	stm32f0xx_ll_usart.c	46;"	d	file:
+assert_param	stm32f0xx_ll_utils.c	44;"	d	file:
+g_pfnVectors	startup_stm32f051x8.s	/^g_pfnVectors:$/;"	l
