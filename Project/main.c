@@ -7,6 +7,8 @@
 #include "stm32f0xx_ll_spi.h"
 
 /*-----|PINS|-----
+PB0			сервопривод
+
 PC0			питание
 PC1			открыто
 PC2			закрыто
@@ -27,14 +29,16 @@ PA4 DC			1 данные/0 команда
 PA5 SCK_SPI		тактирование
 PA6 RST			сброс
 PA7 MOSI_SPI-DIN	данные с мк
-
 */
 
+volatile int tim2_brightness;
+volatile int real_time = 1736;
 volatile int sys_tick = 0;
 volatile int LCD_Enabled = 0;
+
 const int TIM2_PWM_FREQ = 100;
 const int TIM2_CLOCK_FREQ = 10;
-volatile int tim2_brightness;
+const int SAFE_NUM = 19;
 
 enum FRONT
 {
@@ -55,7 +59,6 @@ enum STATE_SYSTEM
 	BLOCKED
 };
 
-
 enum STATE_SYSTEM state_system = SLEEP_OPENED;
 
 void SystemClock_Config();
@@ -64,6 +67,7 @@ void HardFault_Handler();
 void SPI_Config();
 void EnableClock();
 void OutPut_Config();
+void TIM3_Config();
 void TIM2_Config();
 void TIM2_IRQHandler();
 
@@ -102,6 +106,10 @@ void LCD_Wait_Busy();
 void LCD_Print(int x, int y, int n);
 void LCD_SetCoord(int x, int y);
 void LCD_Clear();
+void LCD_Print_Time();
+
+void Open_The_Lock();
+void Close_The_Lock();
 
 int main()
 {
@@ -111,6 +119,7 @@ int main()
 	OutPut_Config();
 	EnableLCD();
 	TIM2_Config();
+	TIM3_Config();
 	LED_Power_On();
 
 //	ChangeState(state_system);
@@ -118,6 +127,16 @@ int main()
 
 	while(1);
 }
+void Close_The_Lock()
+{
+	LL_TIM_OC_SetCompareCH3(TIM3, 265);
+}
+
+void Open_The_Lock()
+{
+	LL_TIM_OC_SetCompareCH3(TIM3, 1200);
+}
+
 
 void LCD_Command()
 {
@@ -341,35 +360,48 @@ void State_3()		//взлом
 
 	LCD_Backlight_On();
 
-	LCD_Print(0x0c * 0, 0x02 * 0, 20);
-	LCD_Print(0x0c * 1, 0x02 * 0, 18);
-	LCD_Print(0x0c * 2, 0x02 * 0, 6);
-	LCD_Print(0x0c * 3, 0x02 * 0, 3);
-	LCD_Print(0x0c * 4, 0x02 * 0, 16);
-	LCD_Print(0x0c * 5, 0x02 * 0, 4);
-	LCD_Print(0x0c * 6, 0x02 * 0, 1);
+	LCD_Print(0x0c * 0, 0x02 * 0, 20);	//Т
+	LCD_Print(0x0c * 1, 0x02 * 0, 18);	//Р
+	LCD_Print(0x0c * 2, 0x02 * 0, 6);	//Е
+	LCD_Print(0x0c * 3, 0x02 * 0, 3);	//В
+	LCD_Print(0x0c * 4, 0x02 * 0, 16);	//О
+	LCD_Print(0x0c * 5, 0x02 * 0, 4);	//Г
+	LCD_Print(0x0c * 6, 0x02 * 0, 1);	//А
 
 	LCD_Print(0x0c * 0, 0x02 * 1, 0);
-	LCD_Print(0x0c * 1, 0x02 * 1, 45);
-	LCD_Print(0x0c * 2, 0x02 * 1, 45);
-	LCD_Print(0x0c * 3, 0x02 * 1, 45);
-	LCD_Print(0x0c * 4, 0x02 * 1, 45);
-	LCD_Print(0x0c * 5, 0x02 * 1, 45);
+	LCD_Print(0x0c * 1, 0x02 * 1, 45);	//#
+	LCD_Print(0x0c * 2, 0x02 * 1, 45);	//#
+	LCD_Print(0x0c * 3, 0x02 * 1, 45);	//#
+	LCD_Print(0x0c * 4, 0x02 * 1, 45);	//#
+	LCD_Print(0x0c * 5, 0x02 * 1, 45);	//#
 	LCD_Print(0x0c * 6, 0x02 * 1, 0);
 
 	LCD_Print(0x0c * 0, 0x02 * 2, 0);
-	LCD_Print(0x0c * 1, 0x02 * 2, 3);
-	LCD_Print(0x0c * 2, 0x02 * 2, 9);
-	LCD_Print(0x0c * 3, 0x02 * 2, 13);
-	LCD_Print(0x0c * 4, 0x02 * 2, 16);
-	LCD_Print(0x0c * 5, 0x02 * 2, 14);
+	LCD_Print(0x0c * 1, 0x02 * 2, 3);	//В
+	LCD_Print(0x0c * 2, 0x02 * 2, 9);	//З
+	LCD_Print(0x0c * 3, 0x02 * 2, 13);	//Л
+	LCD_Print(0x0c * 4, 0x02 * 2, 16);	//О
+	LCD_Print(0x0c * 5, 0x02 * 2, 14);	//М
 	LCD_Print(0x0c * 6, 0x02 * 2, 0);
 
 	LCD_Wait_Busy();
 }
 
+void LCD_Print_Time()
+{
+	LCD_Print(0x0c * 0, 0x02 * 0, 0);
+	LCD_Print(0x0c * 1, 0x02 * 0, 34 + real_time / 1000);
+	LCD_Print(0x0c * 2, 0x02 * 0, 34 + real_time / 100 % 10);
+	LCD_Print(0x0c * 3, 0x02 * 0, 46);
+	LCD_Print(0x0c * 4, 0x02 * 0, 34 + real_time / 10 % 10);
+	LCD_Print(0x0c * 5, 0x02 * 0, 34 + real_time % 10);
+	LCD_Print(0x0c * 6, 0x02 * 0, 0);
+}
+
 void State_4()		//открыто
 {
+	Open_The_Lock();
+
 	LED_Opened_On();
 	LED_Closed_Off();
 	LED_Waiting_Off();
@@ -378,13 +410,7 @@ void State_4()		//открыто
 
 	LCD_Backlight_On();
 
-	LCD_Print(0x0c * 0, 0x02 * 0, 0);
-	LCD_Print(0x0c * 1, 0x02 * 0, 36);
-	LCD_Print(0x0c * 2, 0x02 * 0, 36);
-	LCD_Print(0x0c * 3, 0x02 * 0, 46);
-	LCD_Print(0x0c * 4, 0x02 * 0, 34);
-	LCD_Print(0x0c * 5, 0x02 * 0, 42);
-	LCD_Print(0x0c * 6, 0x02 * 0, 0);
+	LCD_Print_Time();
 
 	LCD_Print(0x0c * 0, 0x02 * 1, 19);
 	LCD_Print(0x0c * 1, 0x02 * 1, 6);
@@ -452,13 +478,7 @@ void State_6()		//закрыто
 
 	LCD_Backlight_On();
 
-	LCD_Print(0x0c * 0, 0x02 * 0, 0);
-	LCD_Print(0x0c * 1, 0x02 * 0, 36);
-	LCD_Print(0x0c * 2, 0x02 * 0, 36);
-	LCD_Print(0x0c * 3, 0x02 * 0, 46);
-	LCD_Print(0x0c * 4, 0x02 * 0, 34);
-	LCD_Print(0x0c * 5, 0x02 * 0, 42);
-	LCD_Print(0x0c * 6, 0x02 * 0, 0);
+	LCD_Print_Time();
 
 	LCD_Print(0x0c * 0, 0x02 * 1, 19);
 	LCD_Print(0x0c * 1, 0x02 * 1, 6);
@@ -520,6 +540,8 @@ void State_7()		//ошибка
 
 void State_8()		//введите пароль
 {
+	Close_The_Lock();
+
 	LED_Opened_Off();
 	LED_Closed_Off();
 	LED_Waiting_On();
@@ -580,6 +602,7 @@ void EnableClock()
 
 	LL_APB1_GRP2_EnableClock(LL_APB1_GRP2_PERIPH_SYSCFG);
 	LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM2);
+	LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM3);
 	LL_APB1_GRP2_EnableClock(LL_APB1_GRP2_PERIPH_SPI1);
 }
 
@@ -612,6 +635,31 @@ void OutPut_Config()
 
 	LL_GPIO_SetPinPull(GPIOA, LL_GPIO_PIN_1, LL_GPIO_PULL_DOWN);
 	LL_GPIO_SetPinPull(GPIOA, LL_GPIO_PIN_2, LL_GPIO_PULL_DOWN);
+
+	LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_0, LL_GPIO_MODE_ALTERNATE);	//для сервопривода
+	LL_GPIO_SetAFPin_0_7(GPIOB, LL_GPIO_PIN_0, LL_GPIO_AF_1);
+	LL_GPIO_SetPinPull(GPIOB, LL_GPIO_PIN_0, LL_GPIO_PULL_DOWN);
+}
+void TIM3_Config()
+{
+	LL_TIM_InitTypeDef TIM_InitStruct;
+
+	TIM_InitStruct.Prescaler = __LL_TIM_CALC_PSC(SystemCoreClock, 1000000);
+	TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
+	TIM_InitStruct.Autoreload = 10000;
+	TIM_InitStruct.ClockDivision = LL_TIM_CLOCKDIVISION_DIV1;
+	TIM_InitStruct.RepetitionCounter = 0;
+	LL_TIM_Init(TIM3, &TIM_InitStruct);
+
+	LL_TIM_OC_InitTypeDef TIM3_OC_CH3;
+	LL_TIM_OC_StructInit(&TIM3_OC_CH3);
+	TIM3_OC_CH3.OCMode = LL_TIM_OCMODE_PWM1;
+	TIM3_OC_CH3.OCState = LL_TIM_OCSTATE_ENABLE;
+	TIM3_OC_CH3.OCPolarity = LL_TIM_OCPOLARITY_HIGH;
+	TIM3_OC_CH3.CompareValue = 0;
+	LL_TIM_OC_Init(TIM3, LL_TIM_CHANNEL_CH3, &TIM3_OC_CH3);
+
+	LL_TIM_EnableCounter(TIM3);
 }
 
 void TIM2_Config()
@@ -630,7 +678,7 @@ void TIM2_Config()
 	TIM2_OC_CH3.OCMode = LL_TIM_OCMODE_PWM1;
 	TIM2_OC_CH3.OCState = LL_TIM_OCSTATE_ENABLE;
 	TIM2_OC_CH3.OCPolarity = LL_TIM_OCPOLARITY_HIGH;
-	TIM2_OC_CH3.CompareValue = (LL_TIM_GetAutoReload(TIM2) + 1) / 2;
+	TIM2_OC_CH3.CompareValue = LL_TIM_GetAutoReload(TIM2);
 	LL_TIM_OC_Init(TIM2, LL_TIM_CHANNEL_CH3, &TIM2_OC_CH3);
 
 	LL_TIM_OC_InitTypeDef TIM2_OC_CH2;
