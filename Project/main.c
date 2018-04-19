@@ -31,13 +31,13 @@ PA6 RST			сброс
 PA7 MOSI_SPI-DIN	данные с мк
 */
 
-volatile int tim2_brightness;
+volatile unsigned int tim2_brightness;
 volatile int real_time = 1736;
 volatile int sys_tick = 0;
 volatile int LCD_Enabled = 0;
 
-const int TIM2_PWM_FREQ = 100;
-const int TIM2_CLOCK_FREQ = 10;
+const unsigned int TIM2_PWM_FREQ = 100;
+const unsigned int TIM2_CLOCK_FREQ = 10;
 const int SAFE_NUM = 19;
 
 enum FRONT
@@ -48,18 +48,18 @@ enum FRONT
 
 enum STATE_SYSTEM
 {
-	SLEEP_CLOSED = 1,
-	SLEEP_OPENED,
+	SLEEP = 1,
 	CLOSED,
 	OPENED,
-	WAIT_CLOSED,
-	WAIT_OPENED,
-	ASSERT_FIRE_CLOSED,
-	ASSERT_BREAKING_CLOSED,
+	WAITING,
+	WRONG,
+	FAULT,
+	ASSERT_FIRE,
+	ASSERT_BREAKING,
 	BLOCKED
 };
 
-enum STATE_SYSTEM state_system = SLEEP_OPENED;
+enum STATE_SYSTEM state_system = SLEEP;
 
 void SystemClock_Config();
 void SysTick_Handler();
@@ -85,15 +85,15 @@ void LED_Waiting_On();
 void LED_Waiting_Off();
 
 void ChangeState(int state);
-void State_1();
-void State_2();
-void State_3();
-void State_4();
-void State_5();
-void State_6();
-void State_7();
-void State_8();
-void State_9();
+void State_Fire();
+void State_Breaking();
+void State_Blocked();
+void State_Opened();
+void State_Closed();
+void State_Waiting();
+void State_Sleep();
+void State_Fault();
+void State_Wrong();
 
 void EnableLCD();
 void LCD_Command();
@@ -107,6 +107,8 @@ void LCD_Print(int x, int y, int n);
 void LCD_SetCoord(int x, int y);
 void LCD_Clear();
 void LCD_Print_Time();
+void LCD_Print_Lattice(int num_str);
+void LCD_Print_Assert(int num_str);
 
 void Open_The_Lock();
 void Close_The_Lock();
@@ -122,11 +124,11 @@ int main()
 	TIM3_Config();
 	LED_Power_On();
 
-//	ChangeState(state_system);
-	ChangeState(4);
+	ChangeState(state_system);
 
 	while(1);
 }
+
 void Close_The_Lock()
 {
 	LL_TIM_OC_SetCompareCH3(TIM3, 265);
@@ -136,7 +138,6 @@ void Open_The_Lock()
 {
 	LL_TIM_OC_SetCompareCH3(TIM3, 1200);
 }
-
 
 void LCD_Command()
 {
@@ -246,37 +247,59 @@ void ChangeState(int state)
 {
 	switch (state)
 	{
-		case SLEEP_CLOSED:
-			State_1();
-			break;
-		case SLEEP_OPENED:
-			State_2();
+		case SLEEP:
+			State_Sleep();
 			break;
 		case CLOSED:
-			State_3();
+			State_Closed();
 			break;
 		case OPENED:
-			State_4();
+			State_Opened();
 			break;
-		case WAIT_CLOSED:
-			State_5();
+		case WRONG:
+			State_Wrong();
 			break;
-		case WAIT_OPENED:
-			State_6();
+		case FAULT:
+			State_Fault();
 			break;
-		case ASSERT_FIRE_CLOSED:
-			State_7();
+		case ASSERT_FIRE:
+			State_Fire();
 			break;
-		case ASSERT_BREAKING_CLOSED:
-			State_8();
+		case ASSERT_BREAKING:
+			State_Breaking();
 			break;
 		case BLOCKED:
-			State_9();
+			State_Blocked();
 			break;
-	}
+		case WAITING:
+			State_Waiting();
+			break;
+}
 }
 
-void State_1()		//пожар
+void LCD_Print_Assert(int num_str)
+{
+	LCD_Print(0x0c * 0, 0x02 * num_str, 20);	//Т
+	LCD_Print(0x0c * 1, 0x02 * num_str, 18);	//Р
+	LCD_Print(0x0c * 2, 0x02 * num_str, 6);		//Е
+	LCD_Print(0x0c * 3, 0x02 * num_str, 3);		//В
+	LCD_Print(0x0c * 4, 0x02 * num_str, 16);	//О
+	LCD_Print(0x0c * 5, 0x02 * num_str, 4);		//Г
+	LCD_Print(0x0c * 6, 0x02 * num_str, 1);		//А
+}
+
+void LCD_Print_Lattice(int num_str)
+{
+	LCD_Print(0x0c * 0, 0x02 * num_str, 45);	//#
+	LCD_Print(0x0c * 1, 0x02 * num_str, 45);	//#
+	LCD_Print(0x0c * 2, 0x02 * num_str, 45);	//#
+	LCD_Print(0x0c * 3, 0x02 * num_str, 45);	//#
+	LCD_Print(0x0c * 4, 0x02 * num_str, 45);	//#
+	LCD_Print(0x0c * 5, 0x02 * num_str, 45);	//#
+	LCD_Print(0x0c * 6, 0x02 * num_str, 45);	//#
+}
+
+void State_Fire()
 {
 	LED_Opened_Off();
 	LED_Closed_On();
@@ -286,34 +309,21 @@ void State_1()		//пожар
 
 	LCD_Backlight_On();
 
-	LCD_Print(0x0c * 0, 0x02 * 0, 20);
-	LCD_Print(0x0c * 1, 0x02 * 0, 18);
-	LCD_Print(0x0c * 2, 0x02 * 0, 6);
-	LCD_Print(0x0c * 3, 0x02 * 0, 3);
-	LCD_Print(0x0c * 4, 0x02 * 0, 16);
-	LCD_Print(0x0c * 5, 0x02 * 0, 4);
-	LCD_Print(0x0c * 6, 0x02 * 0, 1);
+	LCD_Print_Assert(0);
+	LCD_Print_Lattice(1);
 
-	LCD_Print(0x0c * 0, 0x02 * 1, 0);
-	LCD_Print(0x0c * 1, 0x02 * 1, 45);
-	LCD_Print(0x0c * 2, 0x02 * 1, 45);
-	LCD_Print(0x0c * 3, 0x02 * 1, 45);
-	LCD_Print(0x0c * 4, 0x02 * 1, 45);
-	LCD_Print(0x0c * 5, 0x02 * 1, 45);
-	LCD_Print(0x0c * 6, 0x02 * 1, 0);
-
-	LCD_Print(0x0c * 0, 0x02 * 2, 0);
-	LCD_Print(0x0c * 1, 0x02 * 2, 17);
-	LCD_Print(0x0c * 2, 0x02 * 2, 16);
-	LCD_Print(0x0c * 3, 0x02 * 2, 8);
-	LCD_Print(0x0c * 4, 0x02 * 2, 1);
-	LCD_Print(0x0c * 5, 0x02 * 2, 18);
-	LCD_Print(0x0c * 6, 0x02 * 2, 0);
+	LCD_Print(0x0c * 0, 0x02 * 2, 0);	//отступ
+	LCD_Print(0x0c * 1, 0x02 * 2, 17);	//П
+	LCD_Print(0x0c * 2, 0x02 * 2, 16);	//О
+	LCD_Print(0x0c * 3, 0x02 * 2, 8);	//Ж
+	LCD_Print(0x0c * 4, 0x02 * 2, 1);	//А
+	LCD_Print(0x0c * 5, 0x02 * 2, 18);	//Р
+	LCD_Print(0x0c * 6, 0x02 * 2, 0);	//отступ
 
 	LCD_Wait_Busy();
 }
 
-void State_2()		//blocked
+void State_Blocked()
 {
 	LED_Opened_Off();
 	LED_Closed_On();
@@ -323,34 +333,22 @@ void State_2()		//blocked
 
 	LCD_Backlight_On();
 
-	LCD_Print(0x0c * 0, 0x02 * 0, 45);
-	LCD_Print(0x0c * 1, 0x02 * 0, 45);
-	LCD_Print(0x0c * 2, 0x02 * 0, 45);
-	LCD_Print(0x0c * 3, 0x02 * 0, 45);
-	LCD_Print(0x0c * 4, 0x02 * 0, 45);
-	LCD_Print(0x0c * 5, 0x02 * 0, 45);
-	LCD_Print(0x0c * 6, 0x02 * 0, 45);
+	LCD_Print_Lattice(0);
 
-	LCD_Print(0x0c * 0, 0x02 * 1, 3);
-	LCD_Print(0x0c * 1, 0x02 * 1, 47);
-	LCD_Print(0x0c * 2, 0x02 * 1, 16);
-	LCD_Print(0x0c * 3, 0x02 * 1, 19);
-	LCD_Print(0x0c * 4, 0x02 * 1, 12);
-	LCD_Print(0x0c * 5, 0x02 * 1, 6);
-	LCD_Print(0x0c * 6, 0x02 * 1, 48);
+	LCD_Print(0x0c * 0, 0x02 * 1, 3);	//B
+	LCD_Print(0x0c * 1, 0x02 * 1, 47);	//L
+	LCD_Print(0x0c * 2, 0x02 * 1, 16);	//O
+	LCD_Print(0x0c * 3, 0x02 * 1, 19);	//C
+	LCD_Print(0x0c * 4, 0x02 * 1, 12);	//K
+	LCD_Print(0x0c * 5, 0x02 * 1, 6);	//E
+	LCD_Print(0x0c * 6, 0x02 * 1, 48);	//D
 
-	LCD_Print(0x0c * 0, 0x02 * 2, 45);
-	LCD_Print(0x0c * 1, 0x02 * 2, 45);
-	LCD_Print(0x0c * 2, 0x02 * 2, 45);
-	LCD_Print(0x0c * 3, 0x02 * 2, 45);
-	LCD_Print(0x0c * 4, 0x02 * 2, 45);
-	LCD_Print(0x0c * 5, 0x02 * 2, 45);
-	LCD_Print(0x0c * 6, 0x02 * 2, 45);
+	LCD_Print_Lattice(2);
 
 	LCD_Wait_Busy();
 }
 
-void State_3()		//взлом
+void State_Breaking()
 {
 	LED_Opened_Off();
 	LED_Closed_On();
@@ -360,21 +358,8 @@ void State_3()		//взлом
 
 	LCD_Backlight_On();
 
-	LCD_Print(0x0c * 0, 0x02 * 0, 20);	//Т
-	LCD_Print(0x0c * 1, 0x02 * 0, 18);	//Р
-	LCD_Print(0x0c * 2, 0x02 * 0, 6);	//Е
-	LCD_Print(0x0c * 3, 0x02 * 0, 3);	//В
-	LCD_Print(0x0c * 4, 0x02 * 0, 16);	//О
-	LCD_Print(0x0c * 5, 0x02 * 0, 4);	//Г
-	LCD_Print(0x0c * 6, 0x02 * 0, 1);	//А
-
-	LCD_Print(0x0c * 0, 0x02 * 1, 0);
-	LCD_Print(0x0c * 1, 0x02 * 1, 45);	//#
-	LCD_Print(0x0c * 2, 0x02 * 1, 45);	//#
-	LCD_Print(0x0c * 3, 0x02 * 1, 45);	//#
-	LCD_Print(0x0c * 4, 0x02 * 1, 45);	//#
-	LCD_Print(0x0c * 5, 0x02 * 1, 45);	//#
-	LCD_Print(0x0c * 6, 0x02 * 1, 0);
+	LCD_Print_Assert(0);
+	LCD_Print_Lattice(1);
 
 	LCD_Print(0x0c * 0, 0x02 * 2, 0);
 	LCD_Print(0x0c * 1, 0x02 * 2, 3);	//В
@@ -398,7 +383,7 @@ void LCD_Print_Time()
 	LCD_Print(0x0c * 6, 0x02 * 0, 0);
 }
 
-void State_4()		//открыто
+void State_Opened()
 {
 	Open_The_Lock();
 
@@ -431,7 +416,7 @@ void State_4()		//открыто
 	LCD_Wait_Busy();
 }
 
-void State_5()		//неверно
+void State_Wrong()
 {
 	LED_Opened_Off();
 	LED_Closed_On();
@@ -441,13 +426,7 @@ void State_5()		//неверно
 
 	LCD_Backlight_On();
 
-	LCD_Print(0x0c * 0, 0x02 * 0, 45);
-	LCD_Print(0x0c * 1, 0x02 * 0, 45);
-	LCD_Print(0x0c * 2, 0x02 * 0, 45);
-	LCD_Print(0x0c * 3, 0x02 * 0, 45);
-	LCD_Print(0x0c * 4, 0x02 * 0, 45);
-	LCD_Print(0x0c * 5, 0x02 * 0, 45);
-	LCD_Print(0x0c * 6, 0x02 * 0, 45);
+	LCD_Print_Lattice(0);
 
 	LCD_Print(0x0c * 0, 0x02 * 1, 15);
 	LCD_Print(0x0c * 1, 0x02 * 1, 6);
@@ -457,18 +436,12 @@ void State_5()		//неверно
 	LCD_Print(0x0c * 5, 0x02 * 1, 15);
 	LCD_Print(0x0c * 6, 0x02 * 1, 16);
 
-	LCD_Print(0x0c * 0, 0x02 * 2, 45);
-	LCD_Print(0x0c * 1, 0x02 * 2, 45);
-	LCD_Print(0x0c * 2, 0x02 * 2, 45);
-	LCD_Print(0x0c * 3, 0x02 * 2, 45);
-	LCD_Print(0x0c * 4, 0x02 * 2, 45);
-	LCD_Print(0x0c * 5, 0x02 * 2, 45);
-	LCD_Print(0x0c * 6, 0x02 * 2, 45);
+	LCD_Print_Lattice(2);
 
 	LCD_Wait_Busy();
 }
 
-void State_6()		//закрыто
+void State_Closed()
 {
 	LED_Opened_Off();
 	LED_Closed_On();
@@ -499,7 +472,7 @@ void State_6()		//закрыто
 	LCD_Wait_Busy();
 }
 
-void State_7()		//ошибка
+void State_Fault()
 {
 	LED_Opened_On();
 	LED_Closed_Off();
@@ -509,36 +482,24 @@ void State_7()		//ошибка
 
 	LCD_Backlight_On();
 
-	LCD_Print(0x0c * 0, 0x02 * 0, 45);
-	LCD_Print(0x0c * 1, 0x02 * 0, 45);
-	LCD_Print(0x0c * 2, 0x02 * 0, 45);
-	LCD_Print(0x0c * 3, 0x02 * 0, 45);
-	LCD_Print(0x0c * 4, 0x02 * 0, 45);
-	LCD_Print(0x0c * 5, 0x02 * 0, 45);
-	LCD_Print(0x0c * 6, 0x02 * 0, 45);
+	LCD_Print_Lattice(0);
 
-	LCD_Print(0x0c * 0, 0x02 * 1, 0);
-	LCD_Print(0x0c * 6, 0x02 * 1, 0);
+	LCD_Print(0x0c * 0, 0x02 * 1, 0);	//отступы в начале строки
+	LCD_Print(0x0c * 6, 0x02 * 1, 0);	//отступы в конце строки
 
-	LCD_Print(0x0c * 0 + 0x05,  0x02 * 1, 16);
-	LCD_Print(0x0c * 1 + 0x05,  0x02 * 1, 26);
-	LCD_Print(0x0c * 2 + 0x05,  0x02 * 1, 10);
-	LCD_Print(0x0c * 3 + 0x05,  0x02 * 1, 2);
-	LCD_Print(0x0c * 4 + 0x05,  0x02 * 1, 12);
-	LCD_Print(0x0c * 5 + 0x05,  0x02 * 1, 1);
+	LCD_Print(0x0c * 0 + 0x05,  0x02 * 1, 16);	//О
+	LCD_Print(0x0c * 1 + 0x05,  0x02 * 1, 26);	//Ш
+	LCD_Print(0x0c * 2 + 0x05,  0x02 * 1, 10);	//И
+	LCD_Print(0x0c * 3 + 0x05,  0x02 * 1, 2);	//Б
+	LCD_Print(0x0c * 4 + 0x05,  0x02 * 1, 12);	//К
+	LCD_Print(0x0c * 5 + 0x05,  0x02 * 1, 1);	//А
 
-	LCD_Print(0x0c * 0, 0x02 * 2, 45);
-	LCD_Print(0x0c * 1, 0x02 * 2, 45);
-	LCD_Print(0x0c * 2, 0x02 * 2, 45);
-	LCD_Print(0x0c * 3, 0x02 * 2, 45);
-	LCD_Print(0x0c * 4, 0x02 * 2, 45);
-	LCD_Print(0x0c * 5, 0x02 * 2, 45);
-	LCD_Print(0x0c * 6, 0x02 * 2, 45);
+	LCD_Print_Lattice(2);
 
 	LCD_Wait_Busy();
 }
 
-void State_8()		//введите пароль
+void State_Waiting()
 {
 	Close_The_Lock();
 
@@ -581,7 +542,7 @@ void State_8()		//введите пароль
 	LCD_Wait_Busy();
 }
 
-void State_9()
+void State_Sleep()
 {
 	LED_Opened_Off();
 	LED_Closed_Off();
@@ -643,6 +604,7 @@ void OutPut_Config()
 void TIM3_Config()
 {
 	LL_TIM_InitTypeDef TIM_InitStruct;
+	LL_TIM_OC_InitTypeDef TIM3_OC_CH3;
 
 	TIM_InitStruct.Prescaler = __LL_TIM_CALC_PSC(SystemCoreClock, 1000000);
 	TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
@@ -651,7 +613,6 @@ void TIM3_Config()
 	TIM_InitStruct.RepetitionCounter = 0;
 	LL_TIM_Init(TIM3, &TIM_InitStruct);
 
-	LL_TIM_OC_InitTypeDef TIM3_OC_CH3;
 	LL_TIM_OC_StructInit(&TIM3_OC_CH3);
 	TIM3_OC_CH3.OCMode = LL_TIM_OCMODE_PWM1;
 	TIM3_OC_CH3.OCState = LL_TIM_OCSTATE_ENABLE;
@@ -665,6 +626,8 @@ void TIM3_Config()
 void TIM2_Config()
 {
 	LL_TIM_InitTypeDef TIM_InitStruct;
+	LL_TIM_OC_InitTypeDef TIM2_OC_CH3;
+	LL_TIM_OC_InitTypeDef TIM2_OC_CH2;
 
 	TIM_InitStruct.Prescaler = __LL_TIM_CALC_PSC(SystemCoreClock, TIM2_CLOCK_FREQ);
 	TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
@@ -673,7 +636,6 @@ void TIM2_Config()
 	TIM_InitStruct.RepetitionCounter = 0;
 	LL_TIM_Init(TIM2, &TIM_InitStruct);
 
-	LL_TIM_OC_InitTypeDef TIM2_OC_CH3;
 	LL_TIM_OC_StructInit(&TIM2_OC_CH3);
 	TIM2_OC_CH3.OCMode = LL_TIM_OCMODE_PWM1;
 	TIM2_OC_CH3.OCState = LL_TIM_OCSTATE_ENABLE;
@@ -681,7 +643,6 @@ void TIM2_Config()
 	TIM2_OC_CH3.CompareValue = LL_TIM_GetAutoReload(TIM2);
 	LL_TIM_OC_Init(TIM2, LL_TIM_CHANNEL_CH3, &TIM2_OC_CH3);
 
-	LL_TIM_OC_InitTypeDef TIM2_OC_CH2;
 	LL_TIM_OC_StructInit(&TIM2_OC_CH2);
 	TIM2_OC_CH2.OCMode = LL_TIM_OCMODE_PWM1;
 	TIM2_OC_CH2.OCState = LL_TIM_OCSTATE_ENABLE;
@@ -769,6 +730,8 @@ void LCD_SetCoord(int x, int y)
 
 void SPI_Config()
 {
+	LL_SPI_InitTypeDef SPI;
+
 	LL_GPIO_SetPinMode (GPIOA, LL_GPIO_PIN_5, LL_GPIO_MODE_ALTERNATE);
 	LL_GPIO_SetPinMode (GPIOA, LL_GPIO_PIN_7, LL_GPIO_MODE_ALTERNATE);
 
@@ -778,7 +741,6 @@ void SPI_Config()
 	LL_GPIO_SetAFPin_0_7(GPIOA, LL_GPIO_PIN_5, LL_GPIO_AF_0);	//SCK
 	LL_GPIO_SetAFPin_0_7(GPIOA, LL_GPIO_PIN_7, LL_GPIO_AF_0);	//MOSI
 
-	LL_SPI_InitTypeDef SPI;
 	SPI.TransferDirection = LL_SPI_FULL_DUPLEX;
 	SPI.Mode = LL_SPI_MODE_MASTER;
 	SPI.DataWidth = LL_SPI_DATAWIDTH_8BIT;
@@ -819,7 +781,7 @@ void SystemClock_Config()
 	SystemCoreClock = 48000000;
 }
 
-int a[] = {4, 8, 7, 4, 8, 6, 8, 5, 6, 3, 6, 1, 6, 2, 4, 9};
+int a[] = {OPENED, WAITING, FAULT, OPENED, WAITING, CLOSED, WAITING, WRONG, CLOSED, ASSERT_FIRE, CLOSED, ASSERT_BREAKING, CLOSED, BLOCKED, SLEEP};
 int i = 0;
 
 void SysTick_Handler()
