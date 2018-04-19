@@ -20,7 +20,6 @@ PC5
 PC6
 PC7
 
-
 	экран
 PA1 			светодиод тревоги
 PA2			светодиод тревоги
@@ -35,10 +34,11 @@ volatile unsigned int tim2_brightness;
 volatile int real_time = 1736;
 volatile int sys_tick = 0;
 volatile int LCD_Enabled = 0;
+char Password[] = "12**";
 
 const unsigned int TIM2_PWM_FREQ = 100;
 const unsigned int TIM2_CLOCK_FREQ = 10;
-const int SAFE_NUM = 19;
+const int SAFE_NUM = 15;
 
 enum FRONT
 {
@@ -109,6 +109,8 @@ void LCD_Clear();
 void LCD_Print_Time();
 void LCD_Print_Lattice(int num_str);
 void LCD_Print_Assert(int num_str);
+void LCD_Print_Safe_Num();
+void LCD_Print_Password(char * Password);
 
 void Open_The_Lock();
 void Close_The_Lock();
@@ -383,6 +385,21 @@ void LCD_Print_Time()
 	LCD_Print(0x0c * 6, 0x02 * 0, 0);
 }
 
+void LCD_Print_Safe_Num()
+{
+	int first_numeral = SAFE_NUM / 10;
+	int second_numeral = SAFE_NUM % 10;
+
+	LCD_Print(0x0c * 0, 0x02 * 1, 19);	//С
+	LCD_Print(0x0c * 1, 0x02 * 1, 6);	//Е
+	LCD_Print(0x0c * 2, 0x02 * 1, 11);	//Й
+	LCD_Print(0x0c * 3, 0x02 * 1, 22);	//Ф
+
+	LCD_Print(0x0c * 4, 0x02 * 1, 0);			//пропуск
+	LCD_Print(0x0c * 5, 0x02 * 1, 34 + first_numeral);	//первая цифра номера
+	LCD_Print(0x0c * 6, 0x02 * 1, 34 + second_numeral);	//вторая цифра номера
+}
+
 void State_Opened()
 {
 	Open_The_Lock();
@@ -396,22 +413,15 @@ void State_Opened()
 	LCD_Backlight_On();
 
 	LCD_Print_Time();
+	LCD_Print_Safe_Num();
 
-	LCD_Print(0x0c * 0, 0x02 * 1, 19);
-	LCD_Print(0x0c * 1, 0x02 * 1, 6);
-	LCD_Print(0x0c * 2, 0x02 * 1, 11);
-	LCD_Print(0x0c * 3, 0x02 * 1, 22);
-	LCD_Print(0x0c * 4, 0x02 * 1, 0);
-	LCD_Print(0x0c * 5, 0x02 * 1, 35);
-	LCD_Print(0x0c * 6, 0x02 * 1, 43);
-
-	LCD_Print(0x0c * 0, 0x02 * 2, 16);
-	LCD_Print(0x0c * 1, 0x02 * 2, 20);
-	LCD_Print(0x0c * 2, 0x02 * 2, 12);
-	LCD_Print(0x0c * 3, 0x02 * 2, 18);
-	LCD_Print(0x0c * 4, 0x02 * 2, 29);
-	LCD_Print(0x0c * 5, 0x02 * 2, 20);
-	LCD_Print(0x0c * 6, 0x02 * 2, 16);
+	LCD_Print(0x0c * 0, 0x02 * 2, 16);	//О
+	LCD_Print(0x0c * 1, 0x02 * 2, 20);	//Т
+	LCD_Print(0x0c * 2, 0x02 * 2, 12);	//К
+	LCD_Print(0x0c * 3, 0x02 * 2, 18);	//Р
+	LCD_Print(0x0c * 4, 0x02 * 2, 29);	//Ы
+	LCD_Print(0x0c * 5, 0x02 * 2, 20);	//Т
+	LCD_Print(0x0c * 6, 0x02 * 2, 16);	//О
 
 	LCD_Wait_Busy();
 }
@@ -428,13 +438,13 @@ void State_Wrong()
 
 	LCD_Print_Lattice(0);
 
-	LCD_Print(0x0c * 0, 0x02 * 1, 15);
-	LCD_Print(0x0c * 1, 0x02 * 1, 6);
-	LCD_Print(0x0c * 2, 0x02 * 1, 3);
-	LCD_Print(0x0c * 3, 0x02 * 1, 6);
-	LCD_Print(0x0c * 4, 0x02 * 1, 18);
-	LCD_Print(0x0c * 5, 0x02 * 1, 15);
-	LCD_Print(0x0c * 6, 0x02 * 1, 16);
+	LCD_Print(0x0c * 0, 0x02 * 1, 15);	//Н
+	LCD_Print(0x0c * 1, 0x02 * 1, 6);	//Е
+	LCD_Print(0x0c * 2, 0x02 * 1, 3);	//В
+	LCD_Print(0x0c * 3, 0x02 * 1, 6);	//Е
+	LCD_Print(0x0c * 4, 0x02 * 1, 18);	//Р
+	LCD_Print(0x0c * 5, 0x02 * 1, 15);	//Н
+	LCD_Print(0x0c * 6, 0x02 * 1, 16);	//О
 
 	LCD_Print_Lattice(2);
 
@@ -453,21 +463,15 @@ void State_Closed()
 
 	LCD_Print_Time();
 
-	LCD_Print(0x0c * 0, 0x02 * 1, 19);
-	LCD_Print(0x0c * 1, 0x02 * 1, 6);
-	LCD_Print(0x0c * 2, 0x02 * 1, 11);
-	LCD_Print(0x0c * 3, 0x02 * 1, 22);
-	LCD_Print(0x0c * 4, 0x02 * 1, 0);
-	LCD_Print(0x0c * 5, 0x02 * 1, 35);
-	LCD_Print(0x0c * 6, 0x02 * 1, 43);
+	LCD_Print_Safe_Num();
 
-	LCD_Print(0x0c * 0, 0x02 * 2, 9);
-	LCD_Print(0x0c * 1, 0x02 * 2, 1);
-	LCD_Print(0x0c * 2, 0x02 * 2, 12);
-	LCD_Print(0x0c * 3, 0x02 * 2, 18);
-	LCD_Print(0x0c * 4, 0x02 * 2, 29);
-	LCD_Print(0x0c * 5, 0x02 * 2, 20);
-	LCD_Print(0x0c * 6, 0x02 * 2, 16);
+	LCD_Print(0x0c * 0, 0x02 * 2, 9);	//З
+	LCD_Print(0x0c * 1, 0x02 * 2, 1);	//А
+	LCD_Print(0x0c * 2, 0x02 * 2, 12);	//К
+	LCD_Print(0x0c * 3, 0x02 * 2, 18);	//Р
+	LCD_Print(0x0c * 4, 0x02 * 2, 29);	//Ы
+	LCD_Print(0x0c * 5, 0x02 * 2, 20);	//Т
+	LCD_Print(0x0c * 6, 0x02 * 2, 16);	//О
 
 	LCD_Wait_Busy();
 }
@@ -511,36 +515,47 @@ void State_Waiting()
 
 	LCD_Backlight_On();
 
-	LCD_Print(0x0c * 0, 0x02 * 0, 3);
-	LCD_Print(0x0c * 1, 0x02 * 0, 3);
-	LCD_Print(0x0c * 2, 0x02 * 0, 6);
-	LCD_Print(0x0c * 3, 0x02 * 0, 5);
-	LCD_Print(0x0c * 4, 0x02 * 0, 10);
-	LCD_Print(0x0c * 5, 0x02 * 0, 20);
-	LCD_Print(0x0c * 6, 0x02 * 0, 6);
+	LCD_Print(0x0c * 0, 0x02 * 0, 3);	//В
+	LCD_Print(0x0c * 1, 0x02 * 0, 3);	//В
+	LCD_Print(0x0c * 2, 0x02 * 0, 6);	//Е
+	LCD_Print(0x0c * 3, 0x02 * 0, 5);	//Д
+	LCD_Print(0x0c * 4, 0x02 * 0, 10);	//И
+	LCD_Print(0x0c * 5, 0x02 * 0, 20);	//Т
+	LCD_Print(0x0c * 6, 0x02 * 0, 6);	//Е
 
-	LCD_Print(0x0c * 0, 0x02 * 1, 0);
-	LCD_Print(0x0c * 6, 0x02 * 1, 0);
+	LCD_Print(0x0c * 0, 0x02 * 1, 0);	//отступ в начале строки
+	LCD_Print(0x0c * 6, 0x02 * 1, 0);	//отступ в конце строки
 
-	LCD_Print(0x0c * 0 + 0x05,  0x02 * 1, 17);
-	LCD_Print(0x0c * 1 + 0x05,  0x02 * 1, 1);
-	LCD_Print(0x0c * 2 + 0x05,  0x02 * 1, 18);
-	LCD_Print(0x0c * 3 + 0x05,  0x02 * 1, 16);
-	LCD_Print(0x0c * 4 + 0x05,  0x02 * 1, 13);
-	LCD_Print(0x0c * 5 + 0x05,  0x02 * 1, 30);
+	LCD_Print(0x0c * 0 + 0x05,  0x02 * 1, 17);	//П
+	LCD_Print(0x0c * 1 + 0x05,  0x02 * 1, 1);	//А
+	LCD_Print(0x0c * 2 + 0x05,  0x02 * 1, 18);	//Р
+	LCD_Print(0x0c * 3 + 0x05,  0x02 * 1, 16);	//О
+	LCD_Print(0x0c * 4 + 0x05,  0x02 * 1, 13);	//Л
+	LCD_Print(0x0c * 5 + 0x05,  0x02 * 1, 30);	//Ь
 
 	LCD_Print(0x0c * 0, 0x02 * 2, 0);
 	LCD_Print(0x0c * 6, 0x02 * 2, 0);
 
-	LCD_Print(0x0c * 0 + 0x05,  0x02 * 2, 0);
-	LCD_Print(0x0c * 1 + 0x05,  0x02 * 2, 44);
-	LCD_Print(0x0c * 2 + 0x05,  0x02 * 2, 44);
-	LCD_Print(0x0c * 3 + 0x05,  0x02 * 2, 44);
-	LCD_Print(0x0c * 4 + 0x05,  0x02 * 2, 44);
-	LCD_Print(0x0c * 5 + 0x05,  0x02 * 2, 0);
+	LCD_Print_Password(Password);
 
 	LCD_Wait_Busy();
 }
+
+void LCD_Print_Password(char * Password)
+{
+	int i;
+
+	LCD_Print(0x0c * 0 + 0x05,  0x02 * 2, 0);	//отступ
+
+	for(i = 0; i < 4; i++)
+		if(Password[i] == '*')
+			LCD_Print(0x0c * (i + 1) + 0x05,  0x02 * 2, 44);	//*
+		else
+			LCD_Print(0x0c * (i + 1) + 0x05,  0x02 * 2, 34 + Password[i] - '0');	//соответсвующее число
+
+	LCD_Print(0x0c * 5 + 0x05,  0x02 * 2, 0);	//отступ
+}
+
 
 void State_Sleep()
 {
@@ -894,7 +909,7 @@ static const char LCD_Base[][24] =
 	{0x00, 0xfe, 0xfe, 0x86, 0x86, 0x86, 0x86, 0x86, 0x86, 0xfe, 0xfe, 0x00,
 	0x00, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x61, 0x7f, 0x7f, 0x00},	// 43 9
 	{0x00, 0x98, 0xb8, 0xf0, 0xe0, 0xfe, 0xfe, 0xe0, 0xf0, 0xb8, 0x98, 0x00,
-	0x00, 0x19, 0x1d, 0x0f, 0x05, 0x7f, 0x7f, 0x05, 0x0f, 0x1d, 0x19, 0x00},	// 44 *
+	0x00, 0x19, 0x1d, 0x0f, 0x07, 0x7f, 0x7f, 0x07, 0x0f, 0x1d, 0x19, 0x00},	// 44 *
 	{0x00, 0x60, 0x60, 0xfe, 0xfe, 0x60, 0x60, 0xfe, 0xfe, 0x60, 0x60, 0x00,
 	0x00, 0x06, 0x06, 0x7f, 0x7f, 0x06, 0x06, 0x7f, 0x7f, 0x06, 0x06, 0x00},	// 45 #
 	{0x00, 0x00, 0x00, 0x00, 0x30, 0x78, 0x78, 0x30, 0x00, 0x00, 0x00, 0x00,
