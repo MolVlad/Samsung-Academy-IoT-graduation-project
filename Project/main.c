@@ -7,27 +7,35 @@
 #include "stm32f0xx_ll_spi.h"
 
 /*-----|PINS|-----
+
 PB0			сервопривод
+PB2			пьезопищалка
+PB1			динамик
 
 PC0			питание
 PC1			открыто
 PC2			закрыто
 PC3			ожидается пароль
 
-	освещение
-PC4
-PC5
-PC6
-PC7
+	клавиатура
+подающие сигнал
+PC13-PC15
+принимающие сигнал
 
-	экран
+
+освещение
 PA1 			светодиод тревоги
 PA2			светодиод тревоги
+
+	экран
 PA3 BL			подсветка экрана
 PA4 DC			1 данные/0 команда
 PA5 SCK_SPI		тактирование
 PA6 RST			сброс
 PA7 MOSI_SPI-DIN	данные с мк
+
+	usart
+PA8-PA12
 */
 
 volatile unsigned int tim2_brightness;
@@ -59,17 +67,22 @@ enum STATE_SYSTEM
 	BLOCKED
 };
 
-enum STATE_SYSTEM state_system = SLEEP;
+enum STATE_SYSTEM state_system_cur = 0;
+enum STATE_SYSTEM state_system_new = SLEEP;
 
 void SystemClock_Config();
-void SysTick_Handler();
-void HardFault_Handler();
 void SPI_Config();
 void EnableClock();
 void OutPut_Config();
 void TIM3_Config();
 void TIM2_Config();
+void TIM14_Config();
+void Timers_Config();
+
+void SysTick_Handler();
+void HardFault_Handler();
 void TIM2_IRQHandler();
+void TIM14_IRQHandler();
 
 void LED_AssertBlink_On();
 void LED_AssertBlink_Off();
@@ -84,7 +97,7 @@ void LED_Closed_Off();
 void LED_Waiting_On();
 void LED_Waiting_Off();
 
-void ChangeState(int state);
+void ChangeState();
 void State_Fire();
 void State_Breaking();
 void State_Blocked();
@@ -95,7 +108,7 @@ void State_Sleep();
 void State_Fault();
 void State_Wrong();
 
-void EnableLCD();
+void LCD_Enable();
 void LCD_Command();
 void LCD_Data();
 void LCD_Reset_On();
@@ -121,14 +134,21 @@ int main()
 	EnableClock();
 	SPI_Config();
 	OutPut_Config();
-	EnableLCD();
-	TIM2_Config();
-	TIM3_Config();
+	LCD_Enable();
 	LED_Power_On();
 
-	ChangeState(state_system);
+	Timers_Config();
+
+	ChangeState();
 
 	while(1);
+}
+
+void Timers_Config()
+{
+	TIM2_Config();
+	TIM3_Config();
+	TIM14_Config();
 }
 
 void Close_The_Lock()
@@ -245,38 +265,43 @@ void LED_AssertBlink_Off()
 		LL_TIM_DisableCounter(TIM2);
 }
 
-void ChangeState(int state)
+void ChangeState()
 {
-	switch (state)
+	if(state_system_cur != state_system_new)
 	{
-		case SLEEP:
-			State_Sleep();
-			break;
-		case CLOSED:
-			State_Closed();
-			break;
-		case OPENED:
-			State_Opened();
-			break;
-		case WRONG:
-			State_Wrong();
-			break;
-		case FAULT:
-			State_Fault();
-			break;
-		case ASSERT_FIRE:
-			State_Fire();
-			break;
-		case ASSERT_BREAKING:
-			State_Breaking();
-			break;
-		case BLOCKED:
-			State_Blocked();
-			break;
-		case WAITING:
-			State_Waiting();
-			break;
-}
+		switch (state_system_new)
+		{
+			case SLEEP:
+				State_Sleep();
+				break;
+			case CLOSED:
+				State_Closed();
+				break;
+			case OPENED:
+				State_Opened();
+				break;
+			case WRONG:
+				State_Wrong();
+				break;
+			case FAULT:
+				State_Fault();
+				break;
+			case ASSERT_FIRE:
+				State_Fire();
+				break;
+			case ASSERT_BREAKING:
+				State_Breaking();
+				break;
+			case BLOCKED:
+				State_Blocked();
+				break;
+			case WAITING:
+				State_Waiting();
+				break;
+		}
+
+		state_system_cur = state_system_new;
+	}
 }
 
 void LCD_Print_Assert(int num_str)
@@ -579,6 +604,7 @@ void EnableClock()
 	LL_APB1_GRP2_EnableClock(LL_APB1_GRP2_PERIPH_SYSCFG);
 	LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM2);
 	LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM3);
+	LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM14);
 	LL_APB1_GRP2_EnableClock(LL_APB1_GRP2_PERIPH_SPI1);
 }
 
@@ -615,7 +641,53 @@ void OutPut_Config()
 	LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_0, LL_GPIO_MODE_ALTERNATE);	//для сервопривода
 	LL_GPIO_SetAFPin_0_7(GPIOB, LL_GPIO_PIN_0, LL_GPIO_AF_1);
 	LL_GPIO_SetPinPull(GPIOB, LL_GPIO_PIN_0, LL_GPIO_PULL_DOWN);
+
+	LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_2, LL_GPIO_MODE_OUTPUT);	//для пьезопищалки
+
+	LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_1, LL_GPIO_MODE_OUTPUT);	//для динамика
+
+
+
+
+	LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_13, LL_GPIO_MODE_OUTPUT);
+	LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_14, LL_GPIO_MODE_OUTPUT);
+	LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_15, LL_GPIO_MODE_OUTPUT);
+
+	LL_GPIO_SetPinPull(GPIOC, LL_GPIO_PIN_13, LL_GPIO_PULL_DOWN);
+	LL_GPIO_SetPinPull(GPIOC, LL_GPIO_PIN_14, LL_GPIO_PULL_DOWN);
+	LL_GPIO_SetPinPull(GPIOC, LL_GPIO_PIN_15, LL_GPIO_PULL_DOWN);
+
+	LL_GPIO_SetOutputPin(GPIOC, LL_GPIO_PIN_13);
+
 }
+
+void TIM14_Config()
+{
+	LL_TIM_InitTypeDef TIM_InitStruct;
+	LL_TIM_OC_InitTypeDef TIM14_OC_CH1;
+
+	TIM_InitStruct.Prescaler = __LL_TIM_CALC_PSC(SystemCoreClock, 200000);
+	TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
+	TIM_InitStruct.Autoreload = 200;
+	TIM_InitStruct.ClockDivision = LL_TIM_CLOCKDIVISION_DIV1;
+	TIM_InitStruct.RepetitionCounter = 0;
+	LL_TIM_Init(TIM14, &TIM_InitStruct);
+
+	NVIC_EnableIRQ(TIM14_IRQn);
+	NVIC_SetPriority(TIM14_IRQn, 1);
+
+	LL_TIM_EnableIT_UPDATE(TIM14);
+
+	LL_TIM_EnableCounter(TIM14);
+}
+
+void TIM14_IRQHandler()		//здесь пишем для динамика
+{
+	LL_GPIO_TogglePin(GPIOB, LL_GPIO_PIN_1);
+
+	LL_TIM_ClearFlag_UPDATE(TIM14);
+}
+
 void TIM3_Config()
 {
 	LL_TIM_InitTypeDef TIM_InitStruct;
@@ -706,7 +778,7 @@ void SPI_Transmit(int data)
 	LL_SPI_TransmitData8(SPI1, data);	//записывает в регистр DR данные
 }
 
-void EnableLCD()
+void LCD_Enable()
 {
 	LCD_Command();
 	LCD_Reset_Off();
@@ -807,7 +879,8 @@ void SysTick_Handler()
 	{
 		if(sys_tick % 100000 == 0)
 		{
-			ChangeState(a[i]);
+			state_system_new = a[i];
+			ChangeState();
 			i++;
 			if(i == 16)
 				i = 0;
