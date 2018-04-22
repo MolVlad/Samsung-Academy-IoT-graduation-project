@@ -75,6 +75,7 @@ enum STATE_SYSTEM state_system_cur = 0;
 enum STATE_SYSTEM state_system_new = OPENED;
 
 int sound_tick;
+int tick_delay;
 
 int buttons[][4] =
 {
@@ -83,21 +84,16 @@ int buttons[][4] =
 	{0, 0, 0, 0}
 };
 
-enum KEYBOARD_STATE
-{
-	Click,
-	No
-};
-
-enum KEYBOARD_STATE keyboard = No;
-
-enum SOUND
+enum ENABLE
 {
 	On,
 	Off
 };
 
-enum SOUND sound = Off;
+enum ENABLE sound = Off;
+enum ENABLE keyboard = Off;
+enum ENABLE fault_delay = Off;
+enum ENABLE wrong_delay = Off;
 
 enum COLUMN
 {
@@ -125,6 +121,7 @@ void TIM2_IRQHandler();
 void TIM14_IRQHandler();
 void TIM15_IRQHandler();
 void EXTI4_15_IRQHandler();
+void EXTI0_1_IRQHandler();
 
 void AssertSound_On();
 void AssertSound_Off();
@@ -186,6 +183,8 @@ void Confirm_Password();
 void Clear_Password();
 void Check_Password();
 void Save_Password();
+void Wrong_Delay_Enable();
+void Fault_Delay_Enable();
 
 int main()
 {
@@ -480,11 +479,7 @@ void State_Blocked()
 
 void State_Breaking()
 {
-	LED_Opened_Off();
-	LED_Closed_On();
-	LED_Waiting_Off();
 	LED_AssertBlink_On();
-	LED_Lighting_Off();
 
 	AssertSound_On();
 
@@ -583,6 +578,15 @@ void State_Wrong()
 	LCD_Print_Lattice(2);
 
 	LCD_Wait_Busy();
+
+	Wrong_Delay_Enable();
+}
+
+void Wrong_Delay_Enable()
+{
+	wrong_delay = On;
+	tick_delay = 0;
+	AssertSound_On();
 }
 
 void State_Closed()
@@ -639,7 +643,17 @@ void State_Fault()
 	LCD_Print_Lattice(2);
 
 	LCD_Wait_Busy();
+
+	Fault_Delay_Enable();
 }
+
+void Fault_Delay_Enable()
+{
+	fault_delay = On;
+	tick_delay = 0;
+	AssertSound_On();
+}
+
 
 void State_Waiting()
 {
@@ -691,7 +705,7 @@ void LCD_Print_Password()
 		if(Password[i] == '*')
 			LCD_Print(0x0c * (i + 1) + 0x05,  0x02 * 2, 44);	//*
 		else
-			LCD_Print(0x0c * (i + 1) + 0x05,  0x02 * 2, 34 + Password[i] - '0');	//соответсвующее число
+			LCD_Print(0x0c * (i + 1) + 0x05,  0x02 * 2, 34 + Password[i]);	//соответсвующее число
 
 	LCD_Print(0x0c * 5 + 0x05,  0x02 * 2, 0);	//отступ
 }
@@ -765,6 +779,12 @@ void OI_Config()
 	LL_GPIO_SetPinPull(GPIOC, LL_GPIO_PIN_13, LL_GPIO_PULL_DOWN);
 	LL_GPIO_SetPinPull(GPIOC, LL_GPIO_PIN_14, LL_GPIO_PULL_DOWN);
 	LL_GPIO_SetPinPull(GPIOC, LL_GPIO_PIN_15, LL_GPIO_PULL_DOWN);
+
+	LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_15, LL_GPIO_MODE_INPUT);		//для геркона
+
+	LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_14, LL_GPIO_MODE_INPUT);		//для датчика удара
+
+	LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_0, LL_GPIO_MODE_INPUT);		//юзерская кнопка
 }
 
 void EXTI_Config()
@@ -773,19 +793,32 @@ void EXTI_Config()
 	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTB, LL_SYSCFG_EXTI_LINE5);
 	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTB, LL_SYSCFG_EXTI_LINE6);
 	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTB, LL_SYSCFG_EXTI_LINE7);
+	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTB, LL_SYSCFG_EXTI_LINE14);
+	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTB, LL_SYSCFG_EXTI_LINE15);
 
 	LL_EXTI_EnableIT_0_31(LL_EXTI_LINE_4);
 	LL_EXTI_EnableIT_0_31(LL_EXTI_LINE_5);
 	LL_EXTI_EnableIT_0_31(LL_EXTI_LINE_6);
 	LL_EXTI_EnableIT_0_31(LL_EXTI_LINE_7);
+	LL_EXTI_EnableIT_0_31(LL_EXTI_LINE_14);
+	LL_EXTI_EnableIT_0_31(LL_EXTI_LINE_15);
 
 	LL_EXTI_EnableRisingTrig_0_31(LL_EXTI_LINE_4);
 	LL_EXTI_EnableRisingTrig_0_31(LL_EXTI_LINE_5);
 	LL_EXTI_EnableRisingTrig_0_31(LL_EXTI_LINE_6);
 	LL_EXTI_EnableRisingTrig_0_31(LL_EXTI_LINE_7);
+	LL_EXTI_EnableRisingTrig_0_31(LL_EXTI_LINE_14);
+	LL_EXTI_EnableFallingTrig_0_31(LL_EXTI_LINE_15);
 
 	NVIC_EnableIRQ(EXTI4_15_IRQn);
 	NVIC_SetPriority(EXTI4_15_IRQn, 1);
+
+	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTA, LL_SYSCFG_EXTI_LINE0);
+	LL_EXTI_EnableIT_0_31(LL_EXTI_LINE_0);
+	LL_EXTI_EnableRisingTrig_0_31(LL_EXTI_LINE_0);
+
+	NVIC_EnableIRQ(EXTI0_1_IRQn);
+	NVIC_SetPriority(EXTI0_1_IRQn, 1);
 }
 
 void TIM14_Config()
@@ -1060,34 +1093,80 @@ void SystemClock_Config()
 	SystemCoreClock = 48000000;
 }
 
+int tick_line_0 = 0;
+
+void EXTI0_1_IRQHandler()
+{
+	if(LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_0))
+	{
+		if(tick_line_0 == 0)
+		{
+			if(state_system_cur == BLOCKED)
+			{
+				state_system_new = CLOSED;
+				ChangeState();
+			}
+			else if(state_system_cur == CLOSED || state_system_cur == WAITING_TO_OPEN)
+			{
+				state_system_new = BLOCKED;
+				ChangeState();
+			}
+
+			tick_line_0 = 300;
+		}
+
+		LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_0);
+	}
+}
+
 void EXTI4_15_IRQHandler()
 {
 	if(LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_4))
 	{
 		buttons[column_embedded][3] = 1;
-		keyboard = Click;
+		keyboard = On;
 		LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_4);
 	}
 
 	if(LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_5))
 	{
 		buttons[column_embedded][2] = 1;
-		keyboard = Click;
+		keyboard = On;
 		LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_5);
 	}
 
 	if(LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_6))
 	{
 		buttons[column_embedded][1] = 1;
-		keyboard = Click;
+		keyboard = On;
 		LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_6);
 	}
 
 	if(LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_7))
 	{
 		buttons[column_embedded][0] = 1;
-		keyboard = Click;
+		keyboard = On;
 		LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_7);
+	}
+
+	if(LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_15))
+	{
+		if(state_system_cur == OPENED)
+		{
+			state_system_new = WAITING_TO_CLOSE;
+			ChangeState();
+		}
+		LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_15);
+	}
+
+	if(LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_14))
+	{
+		if(state_system_cur == CLOSED || state_system_cur == WAITING_TO_OPEN)
+		{
+			state_system_new = ASSERT_BREAKING;
+			ChangeState();
+		}
+		LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_14);
 	}
 }
 
@@ -1212,12 +1291,78 @@ int Get_Number()
 
 void Add_To_Password(int num)
 {
+	int i = 0;
 
+	while(Password[i] != '*' && i < 4)
+		i++;
+
+	if(i == 4)
+	{
+		if(state_system_cur == WAITING_TO_CLOSE)
+			state_system_new = FAULT;
+		else
+			state_system_new = WRONG;
+		ChangeState();
+	}
+	else
+	{
+		switch (num)
+		{
+			case ZERO:
+				Password[i] = 0;
+				break;
+			case NUM_1:
+				Password[i] = 1;
+				break;
+			case NUM_2:
+				Password[i] = 2;
+				break;
+			case NUM_3:
+				Password[i] = 3;
+				break;
+			case NUM_4:
+				Password[i] = 4;
+				break;
+			case NUM_5:
+				Password[i] = 5;
+				break;
+			case NUM_6:
+				Password[i] = 6;
+				break;
+			case NUM_7:
+				Password[i] = 7;
+				break;
+			case NUM_8:
+				Password[i] = 8;
+				break;
+			case NUM_9:
+				Password[i] = 9;
+				break;
+		}
+
+		LCD_Print_Password();
+	}
 }
 
 void Check_Password()
 {
+	int i;
+	int errors = 0;
 
+	for(i = 0; i < 4; i++)
+		if(Password[i] != True_Password[i])
+			errors++;
+
+	if(errors)
+	{
+		state_system_new = WRONG;
+		ChangeState();
+	}
+	else
+	{
+		state_system_new = OPENED;
+		ChangeState();
+	}
 }
 
 void Save_Password()
@@ -1319,7 +1464,7 @@ void SysTick_Handler()
 	{
 		sound_tick = 0;
 		sound = Off;
-		keyboard = No;
+		keyboard = Off;
 		int num = Get_Number();
 		Execute_The_Command(num);
 	}
@@ -1327,7 +1472,7 @@ void SysTick_Handler()
 	if(sound == On)
 		sound_tick++;
 
-	if(keyboard == Click && sound == Off)
+	if(keyboard == On && sound == Off)
 	{
 		sound = On;
 	}
@@ -1345,6 +1490,34 @@ void SysTick_Handler()
 		Enable_Right_Column();
 
 	sys_tick++;
+
+	if(wrong_delay == On)
+		tick_delay++;
+
+	if(fault_delay == On)
+		tick_delay++;
+
+	if(tick_delay == 150)
+		AssertSound_Off();
+
+	if(tick_delay == 2000)
+	{
+		if(wrong_delay == On)
+		{
+			state_system_new = CLOSED;
+			wrong_delay = Off;
+		}
+		else if(fault_delay == On)
+		{
+			state_system_new = OPENED;
+			fault_delay = Off;
+		}
+
+		ChangeState();
+	}
+
+	if(tick_line_0)
+		tick_line_0--;
 }
 static const char LCD_Base[][24] =
 {
