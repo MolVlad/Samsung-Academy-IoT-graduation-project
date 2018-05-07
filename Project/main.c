@@ -8,10 +8,13 @@
 
 /*-----|PINS|-----
 PB0			сервопривод
-PB2			пьезопищалка
 PB1			динамик
+PB2			пьезопищалка
 
 PB4-PB7			принимающие для клавиатурыы
+
+PB15			геркон
+PB14			датчик удара
 
 PC0			питание
 PC1			открыто
@@ -43,6 +46,8 @@ volatile int sys_tick = 0;
 volatile int LCD_Enabled = 0;
 char Password[] = "****";
 char True_Password[4];
+int OPEN_THE_LOCK = 1195;
+int CLOSE_THE_LOCK = 920;		//265 - крайнее положение, 1200
 
 const unsigned int TIM2_PWM_FREQ = 200;
 const unsigned int TIM2_CLOCK_FREQ = 10;
@@ -94,6 +99,8 @@ enum ENABLE sound = Off;
 enum ENABLE keyboard = Off;
 enum ENABLE fault_delay = Off;
 enum ENABLE wrong_delay = Off;
+enum ENABLE delay_after_opening = Off;
+int counter_delay = 0;
 
 enum COLUMN
 {
@@ -220,12 +227,12 @@ void Clear_Password()
 
 void Close_The_Lock()
 {
-	LL_TIM_OC_SetCompareCH3(TIM3, 265);
+	LL_TIM_OC_SetCompareCH3(TIM3, CLOSE_THE_LOCK);
 }
 
 void Open_The_Lock()
 {
-	LL_TIM_OC_SetCompareCH3(TIM3, 1200);
+	LL_TIM_OC_SetCompareCH3(TIM3, OPEN_THE_LOCK);
 }
 
 void LCD_Command()
@@ -551,6 +558,8 @@ void State_Opened()
 	LCD_Print(0x0c * 6, 0x02 * 2, 16);	//О
 
 	LCD_Wait_Busy();
+
+	delay_after_opening = On;
 }
 
 void State_Wrong()
@@ -781,6 +790,7 @@ void OI_Config()
 	LL_GPIO_SetPinPull(GPIOC, LL_GPIO_PIN_15, LL_GPIO_PULL_DOWN);
 
 	LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_15, LL_GPIO_MODE_INPUT);		//для геркона
+	LL_GPIO_SetPinPull(GPIOB, LL_GPIO_PIN_15, LL_GPIO_PULL_UP);
 
 	LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_14, LL_GPIO_MODE_INPUT);		//для датчика удара
 
@@ -1151,7 +1161,7 @@ void EXTI4_15_IRQHandler()
 
 	if(LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_15))
 	{
-		if(state_system_cur == OPENED)
+		if(state_system_cur == OPENED && delay_after_opening == Off)
 		{
 			state_system_new = WAITING_TO_CLOSE;
 			ChangeState();
@@ -1514,6 +1524,15 @@ void SysTick_Handler()
 		}
 
 		ChangeState();
+	}
+
+	if(delay_after_opening == On)
+		counter_delay++;
+
+	if(counter_delay == 1000)
+	{
+		counter_delay = 0;
+		delay_after_opening = Off;
 	}
 
 	if(tick_line_0)
