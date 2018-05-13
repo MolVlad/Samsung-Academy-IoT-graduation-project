@@ -5,6 +5,7 @@
 #include "stm32f0xx_ll_exti.h"
 #include "stm32f0xx_ll_tim.h"
 #include "stm32f0xx_ll_spi.h"
+#include "stm32f0xx_ll_usart.h"
 
 void SystemClock_Config();
 void SPI_Config();
@@ -16,6 +17,7 @@ void TIM14_Config();
 void TIM15_Config();
 void Timers_Config();
 void EXTI_Config();
+void Usart_Config();
 void All_Config();
 
 void SysTick_Handler();
@@ -76,6 +78,7 @@ void Save_Password();
 void Wrong_Delay_Enable();
 void Fault_Delay_Enable();
 
+void State_Transmit();
 void ChangeState();
 void State_Breaking();
 void State_Blocked();
@@ -142,6 +145,7 @@ int buttons[][4] =
 
 char Password[] = "****";
 char True_Password[4];
+int number_of_attempt = 0;
 
 enum NUMBER
 {
@@ -189,7 +193,24 @@ int main()
 	All_Config();
 	ChangeState();
 
-	while(1);
+	char byte;
+
+	while(1)
+		if (LL_USART_IsActiveFlag_RXNE(USART1))
+		{
+			byte = LL_USART_ReceiveData8(USART1);
+			switch (byte)
+			{
+				case 'B':
+					state_system_new = BLOCKED;
+					ChangeState();
+					break;
+				case 'o':
+					state_system_new = OPENED;
+					ChangeState();
+					break;
+			}
+		}
 }
 
 void All_Config()
@@ -202,6 +223,7 @@ void All_Config()
 	LED_Power_On();
 	EXTI_Config();
 	Timers_Config();
+	Usart_Config();
 }
 
 void Timers_Config()
@@ -290,27 +312,56 @@ void OI_Config()
 	LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_0, LL_GPIO_MODE_INPUT);		//юзерская кнопка
 }
 
+void Usart_Config()
+{
+        //USART1_TX
+        LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_9, LL_GPIO_MODE_ALTERNATE);
+        LL_GPIO_SetAFPin_8_15(GPIOA, LL_GPIO_PIN_9, LL_GPIO_AF_1);
+        LL_GPIO_SetPinSpeed(GPIOA, LL_GPIO_PIN_9, LL_GPIO_SPEED_FREQ_HIGH);
+        //USART1_RX
+        LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_10, LL_GPIO_MODE_ALTERNATE);
+        LL_GPIO_SetAFPin_8_15(GPIOA, LL_GPIO_PIN_10, LL_GPIO_AF_1);
+        LL_GPIO_SetPinSpeed(GPIOA, LL_GPIO_PIN_10, LL_GPIO_SPEED_FREQ_HIGH);
+        /*
+         * USART Set clock source
+         */
+        LL_APB1_GRP2_EnableClock(LL_APB1_GRP2_PERIPH_USART1);
+        LL_RCC_SetUSARTClockSource(LL_RCC_USART1_CLKSOURCE_PCLK1);
+        /*
+         * USART Setting
+         */
+        LL_USART_SetTransferDirection(USART1, LL_USART_DIRECTION_TX_RX);
+        LL_USART_SetParity(USART1, LL_USART_PARITY_EVEN);
+        LL_USART_SetDataWidth(USART1, LL_USART_DATAWIDTH_8B);
+        LL_USART_SetStopBitsLength(USART1, LL_USART_STOPBITS_1);
+        LL_USART_SetTransferBitOrder(USART1, LL_USART_BITORDER_LSBFIRST);
+        LL_USART_SetBaudRate(USART1, SystemCoreClock, LL_USART_OVERSAMPLING_16, 9600 * 4);
+        /*
+         * USART turn on
+         */
+        LL_USART_Enable(USART1);
+        while (!(LL_USART_IsActiveFlag_TEACK(USART1) &&
+                 LL_USART_IsActiveFlag_REACK(USART1)));
+}
+
 void EXTI_Config()
 {
 	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTB, LL_SYSCFG_EXTI_LINE4);
 	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTB, LL_SYSCFG_EXTI_LINE5);
 	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTB, LL_SYSCFG_EXTI_LINE6);
 	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTB, LL_SYSCFG_EXTI_LINE7);
-	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTB, LL_SYSCFG_EXTI_LINE14);
 	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTB, LL_SYSCFG_EXTI_LINE15);
 
 	LL_EXTI_EnableIT_0_31(LL_EXTI_LINE_4);
 	LL_EXTI_EnableIT_0_31(LL_EXTI_LINE_5);
 	LL_EXTI_EnableIT_0_31(LL_EXTI_LINE_6);
 	LL_EXTI_EnableIT_0_31(LL_EXTI_LINE_7);
-	LL_EXTI_EnableIT_0_31(LL_EXTI_LINE_14);
 	LL_EXTI_EnableIT_0_31(LL_EXTI_LINE_15);
 
 	LL_EXTI_EnableRisingTrig_0_31(LL_EXTI_LINE_4);
 	LL_EXTI_EnableRisingTrig_0_31(LL_EXTI_LINE_5);
 	LL_EXTI_EnableRisingTrig_0_31(LL_EXTI_LINE_6);
 	LL_EXTI_EnableRisingTrig_0_31(LL_EXTI_LINE_7);
-	LL_EXTI_EnableRisingTrig_0_31(LL_EXTI_LINE_14);
 	LL_EXTI_EnableFallingTrig_0_31(LL_EXTI_LINE_15);
 
 	NVIC_EnableIRQ(EXTI4_15_IRQn);
@@ -482,8 +533,8 @@ void SystemClock_Config()
 
 	LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_4);
 
-	SysTick_Config(48000000/1000);
-	SystemCoreClock = 48000000;
+	SysTick_Config(48e6/1000);
+	SystemCoreClock = 48e6;
 }
 
 void TIM14_IRQHandler()
@@ -613,16 +664,6 @@ void EXTI4_15_IRQHandler()
 			ChangeState();
 		}
 		LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_15);
-	}
-
-	if(LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_14))
-	{
-		if(state_system_cur == CLOSED || state_system_cur == WAITING_TO_OPEN)
-		{
-			state_system_new = ASSERT_BREAKING;
-			ChangeState();
-		}
-		LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_14);
 	}
 }
 
@@ -933,14 +974,14 @@ void LCD_Print_Safe_Num()
 	int first_numeral = SAFE_NUM / 10;
 	int second_numeral = SAFE_NUM % 10;
 
-	LCD_Print(0x0c * 0, 0x02 * 1, 19);	//С
-	LCD_Print(0x0c * 1, 0x02 * 1, 6);	//Е
-	LCD_Print(0x0c * 2, 0x02 * 1, 11);	//Й
-	LCD_Print(0x0c * 3, 0x02 * 1, 22);	//Ф
+	LCD_Print(0x0c * 0, 0x02 * 0, 19);	//С
+	LCD_Print(0x0c * 1, 0x02 * 0, 6);	//Е
+	LCD_Print(0x0c * 2, 0x02 * 0, 11);	//Й
+	LCD_Print(0x0c * 3, 0x02 * 0, 22);	//Ф
 
-	LCD_Print(0x0c * 4, 0x02 * 1, 0);			//пропуск
-	LCD_Print(0x0c * 5, 0x02 * 1, 34 + first_numeral);	//первая цифра номера
-	LCD_Print(0x0c * 6, 0x02 * 1, 34 + second_numeral);	//вторая цифра номера
+	LCD_Print(0x0c * 4, 0x02 * 0, 0);			//пропуск
+	LCD_Print(0x0c * 5, 0x02 * 0, 34 + first_numeral);	//первая цифра номера
+	LCD_Print(0x0c * 6, 0x02 * 0, 34 + second_numeral);	//вторая цифра номера
 }
 
 void LCD_Print_Password()
@@ -1223,7 +1264,14 @@ void Check_Password()
 
 	if(errors)
 	{
-		state_system_new = WRONG;
+		number_of_attempt++;
+		if(number_of_attempt >= 3)
+		{
+			number_of_attempt = 0;
+			state_system_new = ASSERT_BREAKING;
+		}
+		else
+			state_system_new = WRONG;
 		ChangeState();
 	}
 	else
@@ -1340,6 +1388,29 @@ void Fault_Delay_Enable()
 	AssertSound_On();
 }
 
+void State_Transmit()
+{
+	char byte = 0;
+
+	switch (state_system_cur)
+	{
+		case OPENED:
+			byte = 'o';
+			break;
+		case CLOSED:
+			byte = 'c';
+			break;
+		case ASSERT_BREAKING:
+			byte = 'B';
+			break;
+	}
+
+	if(byte)
+		LL_USART_TransmitData8(USART1, byte);
+
+//	while (!LL_USART_IsActiveFlag_TC(USART1));
+}
+
 void ChangeState()
 {
 	if(state_system_cur != state_system_new)
@@ -1381,6 +1452,7 @@ void ChangeState()
 
 		state_system_cur = state_system_new;
 	}
+	State_Transmit();
 }
 
 #ifdef advanced
@@ -1489,7 +1561,8 @@ void State_Opened()
 
 	LCD_Backlight_On();
 
-	LCD_Print_Time();
+	LCD_Print_Lattice(1);
+//	LCD_Print_Time();
 	LCD_Print_Safe_Num();
 
 	LCD_Print(0x0c * 0, 0x02 * 2, 16);	//О
@@ -1546,7 +1619,8 @@ void State_Closed()
 
 	LCD_Backlight_On();
 
-	LCD_Print_Time();
+	LCD_Print_Lattice(1);
+//	LCD_Print_Time();
 
 	LCD_Print_Safe_Num();
 
