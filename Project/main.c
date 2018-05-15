@@ -110,7 +110,7 @@ const unsigned int TIM14_CLOCK_FREQ = 100;
 volatile int LCD_Enabled = 0;
 
 int real_time = 1736;
-int SAFE_NUM = 15;
+int SAFE_NUM = 1;
 
 int OPEN_THE_LOCK = 1195;
 int CLOSE_THE_LOCK = 920;		//265 - крайнее положение, 1200
@@ -258,7 +258,9 @@ void OI_Config()
 	//освещение сейфа
 	LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_6, LL_GPIO_MODE_OUTPUT);
 	LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_7, LL_GPIO_MODE_OUTPUT);
+
 	LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_8, LL_GPIO_MODE_OUTPUT);
+	LL_GPIO_SetOutputPin(GPIOC, LL_GPIO_PIN_8);
 
 	LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_3, LL_GPIO_MODE_OUTPUT);	//подсветка экрана
 	LL_GPIO_SetPinMode(GPIOA, LL_GPIO_PIN_4, LL_GPIO_MODE_OUTPUT);	//для экрана
@@ -281,7 +283,8 @@ void OI_Config()
 	LL_GPIO_SetAFPin_0_7(GPIOB, LL_GPIO_PIN_0, LL_GPIO_AF_1);
 	LL_GPIO_SetPinPull(GPIOB, LL_GPIO_PIN_0, LL_GPIO_PULL_DOWN);
 
-	LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_2, LL_GPIO_MODE_OUTPUT);	//для пьезопищалки
+	LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_2, LL_GPIO_MODE_OUTPUT);		//для пьезопищалки
+	LL_GPIO_SetPinPull(GPIOB, LL_GPIO_PIN_2, LL_GPIO_PULL_DOWN);
 
 	LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_1, LL_GPIO_MODE_ALTERNATE);	//для динамика
 	LL_GPIO_SetAFPin_0_7(GPIOB, LL_GPIO_PIN_1, LL_GPIO_AF_0);
@@ -297,11 +300,12 @@ void OI_Config()
 	LL_GPIO_SetPinPull(GPIOB, LL_GPIO_PIN_7, LL_GPIO_PULL_DOWN);
 
 	LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_13, LL_GPIO_MODE_OUTPUT);		//подают сигналы для клавиатуры
-	LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_8, LL_GPIO_MODE_OUTPUT);
+	LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_14, LL_GPIO_MODE_OUTPUT);
+	LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_15, LL_GPIO_MODE_OUTPUT);
 
 	LL_GPIO_SetPinPull(GPIOC, LL_GPIO_PIN_13, LL_GPIO_PULL_DOWN);
 	LL_GPIO_SetPinPull(GPIOC, LL_GPIO_PIN_14, LL_GPIO_PULL_DOWN);
-	LL_GPIO_SetPinPull(GPIOC, LL_GPIO_PIN_8, LL_GPIO_PULL_DOWN);
+	LL_GPIO_SetPinPull(GPIOC, LL_GPIO_PIN_15, LL_GPIO_PULL_DOWN);
 
 	LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_8, LL_GPIO_MODE_INPUT);		//для геркона
 	LL_GPIO_SetPinPull(GPIOB, LL_GPIO_PIN_8, LL_GPIO_PULL_UP);
@@ -577,17 +581,18 @@ void TIM2_IRQHandler()
 	{
 		static enum FRONT tim2_front = RISING;
 
+		if (tim2_brightness == TIM2_CLOCK_FREQ)
+			tim2_front = FALLING;
+		if (tim2_brightness == 0)
+			tim2_front = RISING;
+
 		switch (tim2_front)
 		{
 			case RISING:
 				tim2_brightness ++;
-				if (tim2_brightness == TIM2_CLOCK_FREQ)
-					tim2_front = FALLING;
 				break;
 			case FALLING:
 				tim2_brightness--;
-				if (tim2_brightness == 0)
-					tim2_front = RISING;
 				break;
 			default:
 				while(1);
@@ -1052,14 +1057,12 @@ void LED_Lighting_On()
 {
 	LL_GPIO_SetOutputPin(GPIOC, LL_GPIO_PIN_6);
 	LL_GPIO_SetOutputPin(GPIOC, LL_GPIO_PIN_7);
-	LL_GPIO_SetOutputPin(GPIOC, LL_GPIO_PIN_8);
 }
 
 void LED_Lighting_Off()
 {
 	LL_GPIO_ResetOutputPin(GPIOC, LL_GPIO_PIN_6);
 	LL_GPIO_ResetOutputPin(GPIOC, LL_GPIO_PIN_7);
-	LL_GPIO_ResetOutputPin(GPIOC, LL_GPIO_PIN_8);
 }
 
 void LED_AssertBlink_On()
@@ -1447,9 +1450,9 @@ void ChangeState()
 				break;
 #endif
 		}
-
 		state_system_cur = state_system_new;
 	}
+
 	State_Transmit();
 }
 
