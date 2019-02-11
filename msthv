@@ -1,0 +1,26 @@
+git pull origin <branch>
+
+для компиляции sfml
+g++ -c main.cpp
+g++ main.o -o sfml-app -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+
+отсюда можно узнать IP
+netstat -r -n
+
+ifconfig
+
+IP распберри (с ним получилось подключить по SSH)
+93.175.1.232
+
+список файловых систем
+df -h
+
+записать образ lol.img
+sudo dd bs=4M if=lol.img of=/dev/sdb
+
+о подключении к интернету
+iwconfig
+
+видосик на распберри
+luvcliew -s 640x480 -i 30 if YUYV
+
